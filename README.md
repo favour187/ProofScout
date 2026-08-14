@@ -30,6 +30,11 @@ ProofScout runs entirely in the browser. Pasted messages and saved cases never l
 - High-contrast mode, keyboard navigation and reduced-motion support
 - Offline installation as a Progressive Web App
 - Downloadable zero-data, single-HTML-file edition
+- Chrome page assistant that stays on the page being inspected
+- Current URL analysis for insecure, encoded, disguised or unusually structured links
+- On-page bug doctor for broken images, insecure forms/resources, duplicate IDs and accessibility defects
+- Voice commands and spoken findings through browser speech features
+- Click-to-highlight affected page elements
 - No account, analytics, paid API or backend
 
 ## Technical approach
@@ -39,6 +44,10 @@ The interface uses semantic HTML, responsive CSS and modular vanilla JavaScript.
 This is intentionally an explainable screening model rather than a black-box classifier. It does not guarantee legitimacy; it helps users decide what to verify next.
 
 Saved cases and display preferences use browser local storage. A service worker caches the application shell for offline use.
+
+## Chrome page assistant
+
+The `extension` directory contains ProofScout Scout. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages.
 
 ## Run locally
 
