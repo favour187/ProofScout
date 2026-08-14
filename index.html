@@ -32,14 +32,13 @@
           <p class="eyebrow">Private, explainable opportunity screening</p>
           <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
           <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
-          <div class="hero-badges" aria-label="Product assurances">
-            <span>● No account</span><span>● No uploads</span><span>● No API or repeated data</span>
-          </div>
           <div class="download-row">
-            <a id="assistantInstallBtn" class="offline-download install-primary" href="9fb600ccaa8b44e2babe-1.0.1.xpi"><span>Install ProofScout Assistant</span><span aria-hidden="true">＋</span></a>
-            <a class="offline-download advanced-download" href="extension/proofscout-extension.zip" download><span>Chrome developer package</span><span aria-hidden="true">↗</span></a>
+            <a id="assistantInstallBtn" class="offline-download install-primary hero-install" href="9fb600ccaa8b44e2babe-1.0.1.xpi" data-xpi="9fb600ccaa8b44e2babe-1.0.1.xpi"><span class="install-label">Install ProofScout Assistant</span><span aria-hidden="true">＋</span></a>
           </div>
-          <p id="installHint" class="offline-explain">Tap once in Firefox, review the page-access permission, then approve. The floating Scout button will appear on normal websites.</p>
+          <p id="installHint" class="offline-explain">Open this page in Firefox, tap Install, and approve the page-access permission.</p>
+          <div class="hero-badges" aria-label="Product assurances">
+            <span>● Reads aloud</span><span>● Checks the current page</span><span>● No uploads</span>
+          </div>
         </div>
         <div class="hero-art" aria-hidden="true">
           <svg viewBox="0 0 360 250" role="img">
@@ -212,6 +211,11 @@
       </aside>
     </section>
   </main>
+
+  <div id="mobileInstallBar" class="mobile-install-bar" role="region" aria-label="Install ProofScout Assistant">
+    <div><strong>ProofScout Assistant</strong><span>Check any page without leaving it</span></div>
+    <a id="mobileInstallLink" href="9fb600ccaa8b44e2babe-1.0.1.xpi" data-xpi="9fb600ccaa8b44e2babe-1.0.1.xpi"><span class="mobile-install-label">Install</span></a>
+  </div>
 
   <footer><span>ProofScout</span><span>Built for safer opportunity access · Data stays on your device</span></footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

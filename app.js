@@ -219,6 +219,21 @@ $('#installBtn')?.addEventListener('click',async()=>{
 });
 window.addEventListener('appinstalled',()=>{if($('#installBtn')&&$('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
 
+function configureAssistantInstall(){
+  const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua),isIOS=/iPhone|iPad|iPod/i.test(ua);
+  const main=$('#assistantInstallBtn'),mobile=$('#mobileInstallLink'),mainLabel=$('.install-label'),mobileLabel=$('.mobile-install-label'),hint=$('#installHint');
+  if(!main||!mobile)return;
+  const signed='9fb600ccaa8b44e2babe-1.0.1.xpi';
+  if(isFirefox&&!isIOS){main.href=signed;mobile.href=signed;mainLabel.textContent='Install ProofScout Assistant';mobileLabel.textContent='Install';hint.textContent='Tap Install, review the permission, then approve. Scout will appear on normal websites.';return}
+  if(isAndroid){
+    const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=org.mozilla.firefox');
+    const intent=`intent://favour187.github.io/ProofScout/#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
+    main.href=intent;mobile.href=intent;mainLabel.textContent='Open in Firefox to Install';mobileLabel.textContent='Open Firefox';hint.textContent='ProofScout needs Firefox on mobile. This button opens Firefox—or its free Play Store page if it is not installed.';return
+  }
+  main.href='https://www.mozilla.org/firefox/new/';mobile.href='https://www.mozilla.org/firefox/new/';mainLabel.textContent='Get Firefox to Install';mobileLabel.textContent='Get Firefox';hint.textContent='Install Firefox free, then return to this page and tap Install ProofScout Assistant.';
+}
+configureAssistantInstall();
+
 function openSharedPage(){
   const p=new URLSearchParams(location.search);if(p.get('shared')!=='1')return;
   const title=p.get('title')||'Shared opportunity page',text=p.get('text')||'',url=p.get('url')||'';
