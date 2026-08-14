@@ -211,13 +211,13 @@ $$('[data-go]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.datas
 if(localStorage.getItem('proofscout-contrast')==='1')document.body.classList.add('high-contrast');
 updateSavedCount();
 
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if($('#installHint'))$('#installHint').textContent='Ready to install — one tap, no app store required.'});
+window.addEventListener('beforeinstallprompt',e=>{if(!$('#installBtn'))return;e.preventDefault();installPrompt=e;if($('#installHint'))$('#installHint').textContent='Ready to install — one tap, no app store required.'});
 $('#installBtn')?.addEventListener('click',async()=>{
   if(installPrompt){installPrompt.prompt();const result=await installPrompt.userChoice;$('#installHint').textContent=result.outcome==='accepted'?'Installed. On another page, tap Share → ProofScout.':'You can install whenever you are ready.';installPrompt=null;return}
   if(window.matchMedia('(display-mode: standalone)').matches){toast('ProofScout is already installed');return}
   $('#installHint').textContent='In Chrome, open the menu and tap “Install app” or “Add to Home screen.”';toast('Use Chrome menu → Install app');
 });
-window.addEventListener('appinstalled',()=>{if($('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
+window.addEventListener('appinstalled',()=>{if($('#installBtn')&&$('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
 
 function openSharedPage(){
   const p=new URLSearchParams(location.search);if(p.get('shared')!=='1')return;
