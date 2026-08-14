@@ -8,7 +8,7 @@ ProofScout is a private, explainable screening tool for online jobs, grants, sch
 
 Online opportunities can change lives, but fake grants, jobs and prize notices often imitate legitimate organizations. People need more than a mysterious “scam score”: they need to understand the evidence, know what remains unverified and leave with concrete next steps.
 
-ProofScout runs entirely in the browser. Pasted messages and saved cases never leave the user's device.
+ProofScout runs entirely in the browser. Pasted messages and saved cases never leave the user's device. The repository also includes `proofscout-offline.html`, a complete single-file edition with its CSS and screening engine embedded. It can be transferred by USB, Bluetooth or local sharing and opened directly in Chrome with no internet connection.
 
 ## Features
 
@@ -25,6 +25,7 @@ ProofScout runs entirely in the browser. Pasted messages and saved cases never l
 - English and Hausa safety guidance
 - High-contrast mode, keyboard navigation and reduced-motion support
 - Offline installation as a Progressive Web App
+- Downloadable zero-data, single-HTML-file edition
 - No account, analytics, paid API or backend
 
 ## Technical approach

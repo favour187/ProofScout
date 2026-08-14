@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#101218" />
+  <meta name="description" content="ProofScout helps people inspect online opportunities before sharing money or personal information." />
+  <title>ProofScout Zero-Data Edition</title>
+  <style>
+:root{--bg:#101218;--panel:#171a22;--panel2:#1d2029;--line:#303541;--text:#f5f6f1;--muted:#aeb5c3;--lime:#bcff5c;--cyan:#6ee7ff;--amber:#ffb36b;--red:#ff6b79;--green:#7ee49b;--shadow:0 22px 60px rgba(0,0,0,.28);--radius:24px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}button,input,textarea{font:inherit}.skip{position:fixed;top:-100px;left:20px;background:var(--lime);color:#101218;padding:10px 16px;z-index:99;border-radius:8px}.skip:focus{top:20px}.topbar{height:76px;display:flex;align-items:center;padding:0 clamp(20px,5vw,72px);border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(16,18,24,.92);backdrop-filter:blur(18px);z-index:20}.brand{display:flex;align-items:center;gap:11px;color:var(--text);text-decoration:none;font-weight:850;letter-spacing:-.03em;font-size:20px}.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--lime);color:#101218;font-size:18px}.topbar nav{display:flex;margin:auto;gap:8px}.nav-link,.icon-btn,.text-btn,.type-chip,.sample-btn{border:0;background:transparent;color:var(--muted);cursor:pointer}.nav-link{padding:10px 14px;border-radius:11px;font-weight:650}.nav-link:hover,.nav-link.active{background:var(--panel2);color:var(--text)}.count{background:var(--line);border-radius:99px;padding:1px 6px;font-size:11px}.icon-btn{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;color:var(--text)}main{min-height:calc(100vh - 130px)}.view{display:none}.view.active{display:block}.hero{max-width:1280px;margin:0 auto;padding:clamp(54px,7vw,92px) clamp(20px,5vw,72px) 46px;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:60px}.eyebrow,.step{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:800;color:var(--lime)}.hero h1,.page-heading h1{font-size:clamp(48px,7vw,92px);line-height:.95;letter-spacing:-.067em;margin:14px 0 24px;max-width:850px}.hero h1 span{color:var(--lime)}.lede{font-size:clamp(17px,2vw,21px);max-width:680px;color:var(--muted)}.hero-badges{display:flex;flex-wrap:wrap;gap:18px;color:#d8ddcf;font-size:13px;margin-top:27px}.hero-badges span::first-letter{color:var(--lime)}.offline-download{margin-top:22px;display:inline-flex;align-items:center;justify-content:space-between;gap:34px;padding:12px 16px;border:1px solid var(--line);border-radius:13px;color:var(--text);text-decoration:none;font-weight:780;background:var(--panel)}.offline-download:hover{border-color:var(--lime);color:var(--lime)}.offline-explain{font-size:11px;color:var(--muted);margin:8px 2px}.hero-art svg{width:100%;filter:drop-shadow(0 28px 50px rgba(0,0,0,.35))}.workspace{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,72px) 90px;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}.input-card,.result-card,.empty-panel,.guide-grid article,.safety-callout{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.input-card,.result-card{padding:clamp(22px,3vw,34px)}.section-head,.result-top,.signals-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.section-head h2,.result-top h2{margin:3px 0 24px;font-size:27px;letter-spacing:-.035em}.text-btn{color:var(--cyan);padding:8px}label{display:block;font-weight:700;font-size:13px;margin:19px 0 8px}label span{font-weight:500;color:var(--muted)}input,textarea{width:100%;border:1px solid var(--line);border-radius:14px;background:#11141a;color:var(--text);padding:14px 15px;outline:none}input:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(110,231,255,.13)}textarea{resize:vertical;min-height:190px}.type-row{display:flex;flex-wrap:wrap;gap:8px}.type-chip{border:1px solid var(--line);padding:8px 12px;border-radius:99px}.type-chip.active{color:#101218;background:var(--lime);border-color:var(--lime);font-weight:750}.samples{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:13px 0 20px;font-size:12px;color:var(--muted)}.sample-btn{color:var(--cyan);text-decoration:underline;text-underline-offset:3px}.danger-link{color:var(--amber)}.primary-btn,.secondary-btn{border:0;cursor:pointer;border-radius:14px;font-weight:800}.primary-btn{width:100%;background:var(--lime);color:#11141a;padding:15px 18px;display:flex;justify-content:space-between;align-items:center}.primary-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}.primary-btn.small{width:auto;display:inline-flex;gap:30px;margin-top:10px}.secondary-btn{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:12px 15px}.privacy-note{font-size:11px;color:var(--muted);margin:13px 4px 0}.result-card.empty{min-height:670px;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;padding:50px}.empty h2{font-size:30px;margin:26px 0 8px}.empty p{max-width:460px;color:var(--muted)}.empty ol{list-style:none;padding:0;text-align:left;margin-top:24px}.empty li{padding:7px;color:#dfe3e9}.empty li span{display:inline-grid;place-items:center;width:23px;height:23px;background:var(--panel2);border-radius:7px;margin-right:9px;color:var(--lime);font-size:11px}.radar{width:135px;height:135px;border:1px solid var(--line);border-radius:50%;position:relative;background:repeating-radial-gradient(circle,transparent 0 24px,var(--line) 25px 26px)}.radar:before,.radar:after{content:"";position:absolute;background:var(--line)}.radar:before{width:1px;height:100%;left:50%}.radar:after{height:1px;width:100%;top:50%}.radar span{position:absolute;inset:9px;border-radius:50%;background:conic-gradient(from 0deg,rgba(188,255,92,.45),transparent 24%);animation:spin 3s linear infinite}.radar i{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--lime);top:32px;right:28px;box-shadow:0 0 16px var(--lime)}@keyframes spin{to{transform:rotate(360deg)}}.score-dial{width:94px;height:94px;flex:0 0 auto;display:grid;place-content:center;text-align:center;border-radius:50%;background:conic-gradient(var(--green) 0%,var(--line) 0);position:relative}.score-dial:before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--panel)}.score-dial>*{position:relative}.score-dial strong{font-size:27px;line-height:1}.score-dial span{font-size:9px;color:var(--muted)}.verdict{display:flex;gap:13px;padding:16px;border:1px solid rgba(126,228,155,.35);background:rgba(126,228,155,.08);border-radius:16px;margin:20px 0}.verdict>span{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--green);color:#0d1710;font-weight:900;flex:0 0 auto}.verdict strong{display:block}.verdict p{margin:2px 0 0;color:var(--muted);font-size:13px}.verdict.warning{border-color:rgba(255,179,107,.4);background:rgba(255,179,107,.08)}.verdict.warning>span{background:var(--amber)}.verdict.danger{border-color:rgba(255,107,121,.4);background:rgba(255,107,121,.08)}.verdict.danger>span{background:var(--red)}h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#d6dbe3;margin:25px 0 12px}.claim-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.claim{padding:11px 12px;background:#11141a;border-radius:12px;border:1px solid #252a34}.claim span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.claim strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;margin-top:2px}.signals-head span{font-size:11px;color:var(--muted);margin-top:27px}.signal{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:12px 0;border-top:1px solid var(--line);align-items:start}.signal-icon{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:rgba(126,228,155,.12);color:var(--green);font-size:12px}.signal.warn .signal-icon{background:rgba(255,179,107,.12);color:var(--amber)}.signal.high .signal-icon{background:rgba(255,107,121,.12);color:var(--red)}.signal strong{font-size:13px}.signal p{margin:2px 0;color:var(--muted);font-size:11px}.points{font-size:10px;color:var(--muted);white-space:nowrap}.action{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:12px}.action input{width:auto;accent-color:var(--lime);margin-top:4px}.completeness{margin-top:24px}.completeness-head{display:flex;align-items:center;justify-content:space-between}.completeness-head h3{margin-bottom:8px}.completeness-head strong{font-size:13px;color:var(--cyan)}.meter{height:8px;background:#11141a;border-radius:99px;overflow:hidden;border:1px solid var(--line)}.meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--lime));border-radius:99px;transition:width .4s ease}.completeness p{font-size:11px;color:var(--muted);margin:8px 0}.verify-box{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding:16px;border-radius:16px;background:#11141a;border:1px solid var(--line)}.verify-box h3{margin:0 0 4px}.verify-box p{font-size:11px;color:var(--muted);margin:0}.verify-box button{flex:0 0 auto}.result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.language-card{margin-top:14px;padding:24px;background:linear-gradient(135deg,var(--panel),#18221c);border:1px solid var(--line);border-radius:var(--radius)}.language-card{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}.language-card h2{margin:4px 0;font-size:22px}.language-card #hausaGuide{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px}.language-card #hausaGuide p{color:var(--text);font-size:14px}.narrow{max-width:1060px;margin:0 auto;padding:80px clamp(20px,5vw,72px) 100px}.page-heading{margin-bottom:40px}.page-heading h1{font-size:clamp(46px,7vw,76px);margin-bottom:18px}.page-heading>p:last-child{color:var(--muted);font-size:18px}.case-list{display:grid;gap:12px}.case-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;grid-template-columns:1fr auto;gap:20px}.case-meta{display:flex;gap:10px;color:var(--muted);font-size:11px}.risk-pill{padding:5px 9px;border-radius:99px;background:rgba(126,228,155,.12);color:var(--green);font-weight:800;font-size:11px}.risk-pill.warn{color:var(--amber);background:rgba(255,179,107,.12)}.risk-pill.high{color:var(--red);background:rgba(255,107,121,.12)}.case-card h2{font-size:18px;margin:10px 0 4px}.case-card p{font-size:12px;color:var(--muted);margin:0}.delete-case{align-self:center;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 11px;cursor:pointer}.empty-panel{text-align:center;padding:70px 25px}.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.guide-grid article{padding:25px}.guide-grid article>span{color:var(--lime);font-size:12px;font-weight:900}.guide-grid h2{font-size:20px;margin:13px 0 7px}.guide-grid p,.safety-callout p{color:var(--muted);font-size:13px}.safety-callout{margin-top:14px;padding:24px;border-color:rgba(255,179,107,.5)}footer{min-height:70px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:20px clamp(20px,5vw,72px);color:var(--muted);font-size:12px}footer span:first-child{color:var(--text);font-weight:800}.toast{position:fixed;right:25px;bottom:25px;padding:13px 17px;background:var(--text);color:var(--bg);border-radius:12px;font-weight:750;transform:translateY(100px);opacity:0;transition:.25s;z-index:80}.toast.show{transform:none;opacity:1}.high-contrast{--bg:#000;--panel:#080808;--panel2:#111;--line:#555;--text:#fff;--muted:#ddd;--lime:#d2ff00;--cyan:#00f0ff}.high-contrast .topbar{background:rgba(0,0,0,.95)}@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{display:none}.workspace{grid-template-columns:1fr}.topbar{padding:0 18px}.topbar nav{margin-left:auto;margin-right:8px}.nav-link{font-size:0;padding:9px}.nav-link:before{font-size:12px}.nav-link[data-view="scanner"]:before{content:"Inspect"}.nav-link[data-view="cases"]:before{content:"Saved"}.nav-link[data-view="guide"]:before{content:"Guide"}.count{font-size:10px}.brand>span:last-child{display:none}.result-card.empty{min-height:420px}.guide-grid{grid-template-columns:1fr}}@media(max-width:520px){.hero{padding-top:46px}.verify-box,.language-card{display:flex;flex-direction:column;align-items:stretch}.verify-box button{width:100%}.hero h1{font-size:52px}.hero-badges{gap:8px;flex-direction:column}.input-card,.result-card{border-radius:18px;padding:19px}.claim-grid{grid-template-columns:1fr}.result-top{align-items:center}.score-dial{width:78px;height:78px}.result-actions{flex-direction:column}.secondary-btn{width:100%}footer{align-items:flex-start;flex-direction:column;gap:5px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}@media print{.topbar,.hero,.input-card,.result-actions,footer,.toast{display:none!important}.workspace{display:block;padding:0}.result-card{border:0;box-shadow:none;background:#fff;color:#111}.result-card *{color:#111!important}.result-card{display:block!important}.signal,.action{border-color:#ddd}}
+
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="ProofScout home">
+      <span class="brand-mark" aria-hidden="true">P</span>
+      <span>ProofScout</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <button class="nav-link active" data-view="scanner">Inspect</button>
+      <button class="nav-link" data-view="cases">Saved <span id="savedCount" class="count">0</span></button>
+      <button class="nav-link" data-view="guide">Safety guide</button>
+    </nav>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle high contrast" title="Toggle high contrast">◐</button>
+  </header>
+
+  <main id="main">
+    <section id="scannerView" class="view active" aria-labelledby="pageTitle">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Private, explainable opportunity screening</p>
+          <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
+          <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
+          <div class="hero-badges" aria-label="Product assurances">
+            <span>● No account</span><span>● No uploads</span><span>● No API or repeated data</span>
+          </div>
+          <span class="offline-download"><span>Zero-data edition active</span><span aria-hidden="true">✓</span></span>
+          <p class="offline-explain">This complete app is running from one local file. It makes no network requests.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 360 250" role="img">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bcff5c"/><stop offset="1" stop-color="#6ee7ff"/></linearGradient></defs>
+            <path d="M62 27h191c19 0 34 15 34 34v108c0 19-15 34-34 34H62c-19 0-34-15-34-34V61c0-19 15-34 34-34Z" fill="#181b23" stroke="#343946"/>
+            <rect x="52" y="53" width="142" height="13" rx="6.5" fill="#343946"/><rect x="52" y="80" width="205" height="8" rx="4" fill="#282c37"/><rect x="52" y="99" width="172" height="8" rx="4" fill="#282c37"/><rect x="52" y="118" width="196" height="8" rx="4" fill="#282c37"/>
+            <circle cx="264" cy="178" r="58" fill="#101218" stroke="url(#g)" stroke-width="8"/><path d="m243 178 14 14 29-34" fill="none" stroke="url(#g)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="49" cy="177" r="8" fill="#ffb36b"/><path d="M77 177h91" stroke="#343946" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <section class="input-card" aria-labelledby="inputHeading">
+          <div class="section-head">
+            <div><p class="step">01 · SOURCE MATERIAL</p><h2 id="inputHeading">What were you sent?</h2></div>
+            <button id="clearBtn" class="text-btn">Clear</button>
+          </div>
+          <label for="oppType">Opportunity type</label>
+          <div class="type-row" id="typeRow" role="radiogroup" aria-label="Opportunity type">
+            <button class="type-chip active" role="radio" aria-checked="true" data-type="Competition">Competition</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Job">Job</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Grant">Grant</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Scholarship">Scholarship</button>
+          </div>
+          <label for="sourceUrl">Source URL <span>optional</span></label>
+          <input id="sourceUrl" type="url" placeholder="https://official-website.org/opportunity" autocomplete="off" />
+          <label for="sourceText">Paste the announcement, message or requirements</label>
+          <textarea id="sourceText" rows="11" placeholder="Paste everything you received. More context produces a clearer evidence map."></textarea>
+          <div class="samples">
+            <span>Try an example:</span>
+            <button class="sample-btn" data-sample="credible">Credible competition</button>
+            <button class="sample-btn danger-link" data-sample="risky">Suspicious offer</button>
+          </div>
+          <button id="analyzeBtn" class="primary-btn"><span>Inspect opportunity</span><span aria-hidden="true">→</span></button>
+          <p class="privacy-note">Your text never leaves this browser. ProofScout is a screening aid, not a guarantee of legitimacy.</p>
+        </section>
+
+        <section id="emptyState" class="result-card empty" aria-live="polite">
+          <div class="radar" aria-hidden="true"><span></span><i></i></div>
+          <h2>Evidence appears here</h2>
+          <p>ProofScout looks for payment pressure, identity requests, deadline language, contact methods, eligibility and missing verification signals.</p>
+          <ol>
+            <li><span>1</span> Paste the complete offer</li>
+            <li><span>2</span> Inspect each signal</li>
+            <li><span>3</span> Verify before acting</li>
+          </ol>
+        </section>
+
+        <section id="resultState" class="result-card" hidden aria-live="polite" aria-labelledby="resultTitle">
+          <div class="result-top">
+            <div>
+              <p class="step">02 · EVIDENCE MAP</p>
+              <h2 id="resultTitle">Inspection result</h2>
+            </div>
+            <div id="scoreDial" class="score-dial" role="img" aria-label="Risk score">
+              <strong id="scoreValue">0</strong><span>/100 risk</span>
+            </div>
+          </div>
+          <div id="verdict" class="verdict">
+            <span id="verdictIcon" aria-hidden="true">✓</span>
+            <div><strong id="verdictTitle">Lower-risk signals</strong><p id="verdictCopy"></p></div>
+          </div>
+          <div class="extracted">
+            <h3>Claims detected</h3>
+            <div id="claimGrid" class="claim-grid"></div>
+          </div>
+          <div class="signals">
+            <div class="signals-head"><h3>Why this score?</h3><span id="signalSummary"></span></div>
+            <div id="signalList"></div>
+          </div>
+          <div class="completeness">
+            <div class="completeness-head"><h3>Evidence completeness</h3><strong id="completeValue">0%</strong></div>
+            <div class="meter" aria-hidden="true"><span id="completeBar"></span></div>
+            <p id="completeCopy"></p>
+          </div>
+          <div class="next-actions">
+            <h3>Before you continue</h3>
+            <div id="actionList"></div>
+          </div>
+          <div class="verify-box">
+            <div><h3>Ask the organizer</h3><p>Generate a neutral message that confirms the important claims without revealing sensitive information.</p></div>
+            <button id="copyVerifyBtn" class="secondary-btn">Copy verification request</button>
+          </div>
+          <div class="result-actions">
+            <button id="saveBtn" class="secondary-btn">Save case locally</button>
+            <button id="exportBtn" class="secondary-btn">Export evidence</button>
+            <button id="printBtn" class="secondary-btn">Print report</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="casesView" class="view narrow" hidden aria-labelledby="casesTitle">
+      <div class="page-heading"><p class="eyebrow">Local evidence locker</p><h1 id="casesTitle">Saved cases</h1><p>Cases stay on this device and can be deleted at any time.</p></div>
+      <div id="caseList" class="case-list"></div>
+      <div id="noCases" class="empty-panel"><h2>No saved cases</h2><p>Inspect an opportunity and save the report to compare it later.</p><button class="primary-btn small" data-go="scanner">Inspect one now</button></div>
+    </section>
+
+    <section id="guideView" class="view narrow" hidden aria-labelledby="guideTitle">
+      <div class="page-heading"><p class="eyebrow">Five-minute verification method</p><h1 id="guideTitle">Stop. Trace. Confirm.</h1><p>A repeatable process for any online opportunity.</p></div>
+      <div class="guide-grid">
+        <article><span>01</span><h2>Stop the clock</h2><p>Urgency is not proof. Legitimate opportunities usually publish dates and allow independent verification.</p></article>
+        <article><span>02</span><h2>Trace the source</h2><p>Navigate to the organizer’s official website yourself. Do not rely only on a link inside a forwarded message.</p></article>
+        <article><span>03</span><h2>Confirm the people</h2><p>Check whether organizers, judges and partners acknowledge the opportunity on their own official channels.</p></article>
+        <article><span>04</span><h2>Protect credentials</h2><p>Never share passwords, one-time codes, seed phrases or remote access. Question early requests for identity documents.</p></article>
+        <article><span>05</span><h2>Separate fees from prizes</h2><p>A prize that requires a rushed “release,” “processing,” “gas” or “verification” payment is a major warning sign.</p></article>
+        <article><span>06</span><h2>Preserve evidence</h2><p>Keep the original message, URLs and screenshots. Report impersonation through the real organization’s website.</p></article>
+      </div>
+      <aside class="safety-callout"><strong>If money or identity is at risk</strong><p>Pause the transaction. Contact your bank or payment provider through its official app or website and change exposed credentials immediately.</p></aside>
+      <aside class="language-card">
+        <div><p class="step">ACCESSIBLE SAFETY</p><h2>Quick guidance in Hausa</h2></div>
+        <button id="hausaToggle" class="secondary-btn" aria-expanded="false">Show Hausa guide</button>
+        <div id="hausaGuide" hidden lang="ha">
+          <p><strong>Ka tsaya kafin ka biya kuɗi.</strong> Ka bincika sanarwar ta shafin hukuma, ba ta hanyar saƙon da aka turo maka kawai ba.</p>
+          <p>Kada ka ba kowa kalmar sirri, lambar OTP, bayanan shiga banki ko seed phrase. Hukuma ta gaskiya ba za ta nemi waɗannan bayanan ba.</p>
+          <p>Idan ana matsa maka ka biya “processing fee” domin a saki kyauta, ka dakata ka tuntubi hukumar ta hanyar shafinta na hukuma.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer><span>ProofScout</span><span>Built for safer opportunity access · Data stays on your device</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+
+const samples = {
+  credible: {
+    url: 'https://foundation.example.org/challenge/rules',
+    text: `Global Student Climate Challenge 2026\nApplications close September 14, 2026 at 5:00 PM UTC. Participation is free and no purchase is required. Open to enrolled students aged 18 or older from eligible countries. Submit a working prototype, public source repository and a three-minute demonstration video through the official application portal. First prize: $5,000 USD; second prize: $2,500 USD. Full rules, judging criteria, organizer address and privacy policy are available on our official website. Questions: challenge@foundation.example.org. We will never request passwords, one-time codes or payment to release a prize.`
+  },
+  risky: {
+    url: 'http://global-prize-winner-now.example.net/claim',
+    text: `CONGRATULATIONS!!! You have been specially selected for a guaranteed $10,000 international grant. Act in the next 2 hours or lose your slot. Pay a $75 processing and verification fee in cryptocurrency to release your funds. Contact the agent only on WhatsApp and send your passport, bank login, OTP code and wallet seed phrase. Do not contact the company directly because your award is confidential. Limited slots. Payment today guarantees approval.`
+  }
+};
+
+let selectedType = 'Competition';
+let currentResult = null;
+
+const rules = [
+  {id:'fee', level:'high', points:28, test:t=>/(processing|registration|release|verification|activation|administrative|gas)\s+fee|pay.{0,30}(fee|deposit)|send.{0,20}(crypto|bitcoin|usdt|money)/i.test(t), title:'Upfront payment language', bad:'The offer asks for money before access, approval or prize release.', good:'No obvious upfront-payment request was detected.'},
+  {id:'secret', level:'high', points:32, test:t=>/(password|one[- ]?time (code|password)|\botp\b|seed phrase|bank login|remote access)/i.test(t), title:'Secret credential request', bad:'The message appears to request credentials that legitimate organizers should never need.', good:'No password, OTP or seed-phrase request was detected.'},
+  {id:'pressure', level:'warn', points:14, test:t=>/(act now|next \d+ (minutes?|hours?)|immediately|urgent|last chance|limited slots|today guarantees|lose your slot)/i.test(t), title:'Pressure and artificial urgency', bad:'Pressure language may be trying to prevent independent verification.', good:'No strong pressure language was detected.'},
+  {id:'guarantee', level:'warn', points:14, test:t=>/(guaranteed (approval|winner|prize|grant|job)|specially selected|you have won|pre[- ]?approved)/i.test(t), title:'Guaranteed outcome claim', bad:'The offer implies an outcome before a transparent selection process.', good:'No guaranteed-outcome claim was detected.'},
+  {id:'contradiction', level:'high', points:22, test:t=>/(free to (enter|join|participate)|no (entry )?fee|no purchase)[\s\S]{0,500}(processing|registration|release|verification|activation|administrative|gas)\s+fee|((processing|registration|release|verification|activation|administrative|gas)\s+fee)[\s\S]{0,500}(free to (enter|join|participate)|no (entry )?fee|no purchase)/i.test(t), title:'Contradictory fee claims', bad:'The text says entry is free but also requests another type of payment.', good:'No direct contradiction between free-entry and payment claims was detected.'},
+  {id:'private', level:'warn', points:12, test:t=>/(whatsapp|telegram).{0,40}(only|agent)|contact.{0,20}(whatsapp|telegram)|do not contact|confidential award/i.test(t), title:'Unverifiable communication channel', bad:'The offer discourages normal verification or relies on private messaging.', good:'The text does not discourage contacting the organizer independently.'},
+  {id:'rules', level:'safe', points:-8, test:t=>/(official rules|judging criteria|terms and conditions|privacy policy)/i.test(t), title:'Published process signals', bad:'The announcement mentions public rules, criteria or a privacy policy.', good:'No clear reference to published rules or judging criteria was found.'},
+  {id:'free', level:'safe', points:-6, test:t=>/(free to (enter|join|participate)|no purchase|no entry (cost|fee)|participation is free)/i.test(t), title:'No-fee statement', bad:'The announcement explicitly says participation does not require payment.', good:'No explicit no-fee statement was found; verify costs in the official rules.'},
+  {id:'official', level:'safe', points:-5, test:t=>/(official (website|portal)|organizer address|contact@|support@|challenge@)/i.test(t), title:'Traceable organizer information', bad:'The text includes signals that can be checked through an official channel.', good:'Organizer contact and official-channel details are limited.'}
+];
+
+function extract(text, url) {
+  const money = [...text.matchAll(/(?:US?\$|USD\s*)\s?([\d,]+(?:\.\d{1,2})?)|([\d,]+)\s?(?:USD|dollars?)/gi)]
+    .map(m => Number((m[1]||m[2]).replace(/,/g,''))).filter(Boolean);
+  const dates = text.match(/(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?/gi) || [];
+  const emails = text.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi) || [];
+  const mode = /online|virtual|remote/i.test(text) ? 'Online mentioned' : /in[- ]person|venue|onsite/i.test(text) ? 'In-person mentioned' : 'Not stated';
+  let host = 'Not provided';
+  try { if (url) host = new URL(url).hostname.replace(/^www\./,''); } catch {}
+  const fee = /(processing|registration|release|verification|activation|administrative|gas)\s+fee|pay.{0,30}(fee|deposit)/i.test(text) ? 'Payment requested' : /free to (enter|join|participate)|no purchase|no entry (cost|fee)|participation is free/i.test(text) ? 'Explicitly free' : 'Not stated';
+  return {
+    'Largest prize found': money.length ? `$${Math.max(...money).toLocaleString()}` : 'Not detected',
+    'Deadline found': dates[0] || 'Not detected',
+    'Entry cost': fee,
+    'Participation mode': mode,
+    'Source domain': host,
+    'Contact': emails[0] || 'Not detected'
+  };
+}
+
+function analyze(text, url) {
+  let raw = 18;
+  const signals = rules.map(rule => {
+    const matched = rule.test(text);
+    if (matched) raw += rule.points;
+    const positive = rule.level === 'safe';
+    return {
+      ...rule,
+      matched,
+      effectiveLevel: positive ? (matched ? 'safe' : 'neutral') : (matched ? rule.level : 'safe'),
+      message: matched ? rule.bad : rule.good,
+      displayPoints: matched ? rule.points : 0
+    };
+  });
+  if (!url) raw += 7;
+  else {
+    try {
+      const u = new URL(url);
+      if (u.protocol !== 'https:') raw += 10;
+      if (/bit\.ly|tinyurl|t\.co|shorturl/i.test(u.hostname)) raw += 10;
+    } catch { raw += 12; }
+  }
+  const score = Math.max(0, Math.min(100, raw));
+  return { score, signals, claims: extract(text, url), text, url, type:selectedType, timestamp:new Date().toISOString() };
+}
+
+function render(result) {
+  currentResult = result;
+  $('#emptyState').hidden = true;
+  $('#resultState').hidden = false;
+  $('#scoreValue').textContent = result.score;
+  const color = result.score >= 65 ? 'var(--red)' : result.score >= 35 ? 'var(--amber)' : 'var(--green)';
+  $('#scoreDial').style.background = `conic-gradient(${color} ${result.score}%, var(--line) ${result.score}%)`;
+  $('#scoreDial').setAttribute('aria-label', `Risk score ${result.score} out of 100`);
+  const verdict = $('#verdict');
+  verdict.className = 'verdict' + (result.score >= 65 ? ' danger' : result.score >= 35 ? ' warning' : '');
+  $('#verdictIcon').textContent = result.score >= 65 ? '!' : result.score >= 35 ? '?' : '✓';
+  $('#verdictTitle').textContent = result.score >= 65 ? 'High-risk signals detected' : result.score >= 35 ? 'Verify before proceeding' : 'Lower-risk signals detected';
+  $('#verdictCopy').textContent = result.score >= 65 ? 'Do not pay or share sensitive information until the real organizer confirms this offer.' : result.score >= 35 ? 'Some important evidence is missing or concerning. Trace the offer through independent official sources.' : 'No major danger pattern was found, but independent verification is still necessary.';
+  $('#claimGrid').innerHTML = Object.entries(result.claims).map(([k,v])=>`<div class="claim"><span>${escapeHTML(k)}</span><strong title="${escapeHTML(v)}">${escapeHTML(v)}</strong></div>`).join('');
+  const ordered = [...result.signals].sort((a,b)=>{
+    const rank={high:0,warn:1,neutral:2,safe:3}; return rank[a.effectiveLevel]-rank[b.effectiveLevel];
+  });
+  $('#signalList').innerHTML = ordered.map(s=>`<div class="signal ${s.effectiveLevel==='warn'?'warn':s.effectiveLevel==='high'?'high':''}"><span class="signal-icon">${s.effectiveLevel==='safe'?'✓':s.effectiveLevel==='neutral'?'·':'!'}</span><div><strong>${escapeHTML(s.title)}</strong><p>${escapeHTML(s.message)}</p></div><span class="points">${s.displayPoints>0?`+${s.displayPoints}`:s.displayPoints<0?`${s.displayPoints}`:''}</span></div>`).join('');
+  const concernCount = result.signals.filter(s=>s.matched && ['warn','high'].includes(s.level)).length;
+  $('#signalSummary').textContent = `${concernCount} concern${concernCount===1?'':'s'} found`;
+  const completenessFields = Object.values(result.claims).filter(v=>!['Not detected','Not stated','Not provided'].includes(v)).length;
+  const hasRules = result.signals.some(s=>s.id==='rules'&&s.matched);
+  const completeness = Math.min(100, Math.round((completenessFields / Object.keys(result.claims).length) * 80 + (hasRules ? 20 : 0)));
+  $('#completeValue').textContent = `${completeness}%`;
+  $('#completeBar').style.width = `${completeness}%`;
+  $('#completeCopy').textContent = completeness >= 80 ? 'The announcement exposes most core claims. Confirm them independently on the organizer’s real website.' : completeness >= 50 ? 'Some useful claims are present, but important verification details are still missing.' : 'The announcement is difficult to audit because several core claims are missing.';
+  const actions = actionItems(result);
+  $('#actionList').innerHTML = actions.map((a,i)=>`<label class="action"><input type="checkbox" aria-label="Mark action complete"><span><strong>${i+1}. ${escapeHTML(a.title)}</strong><br>${escapeHTML(a.copy)}</span></label>`).join('');
+  $('#resultState').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function actionItems(r) {
+  const host = r.claims['Source domain'];
+  const items = [
+    {title:'Find the organizer independently', copy:'Search for the organization yourself and navigate from its verified website—not from the forwarded link.'},
+    {title:'Match the rules', copy:'Confirm the deadline, prize, eligibility and fees appear identically on the official rules page.'},
+    {title:'Verify the domain', copy:host==='Not provided'?'Request an official webpage and verify it independently before sharing data.':`Check whether ${host} is genuinely controlled by the named organizer.`}
+  ];
+  if (r.score >= 35) items.unshift({title:'Pause payment and document sharing', copy:'Do not send money, identity documents or account details until the concerns are resolved.'});
+  if (r.signals.find(s=>s.id==='secret'&&s.matched)) items.unshift({title:'Protect your accounts now', copy:'Never send passwords, OTP codes or seed phrases. Change exposed credentials through official services.'});
+  return items.slice(0,5);
+}
+
+function escapeHTML(value='') { return String(value).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function toast(message){ const t=$('#toast'); t.textContent=message; t.classList.add('show'); clearTimeout(toast.timer); toast.timer=setTimeout(()=>t.classList.remove('show'),2300); }
+function verificationMessage(r){
+  return `Hello, I am independently verifying this ${r.type.toLowerCase()} before applying. Please confirm through an official channel:\n\n1. Is the stated deadline ${r.claims['Deadline found']}?\n2. Is the largest advertised prize ${r.claims['Largest prize found']}?\n3. Is the entry cost “${r.claims['Entry cost']}”?\n4. Is ${r.claims['Source domain']} an authorized application domain?\n5. Where can I read the complete official rules and privacy policy?\n\nFor security, I will not send passwords, OTP codes, banking logins or payment until these details are independently confirmed. Thank you.`;
+}
+function exportEvidence(r){
+  const concerns=r.signals.filter(s=>s.matched&&['warn','high'].includes(s.level)).map(s=>({signal:s.title,explanation:s.message,weight:s.points}));
+  const report={product:'ProofScout',notice:'Screening aid only; not a guarantee of legitimacy.',generatedAt:new Date().toISOString(),opportunityType:r.type,riskScore:r.score,source:r.url||null,claims:r.claims,concerns,recommendedActions:actionItems(r)};
+  const blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`proofscout-evidence-${Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function getCases(){ try{return JSON.parse(localStorage.getItem('proofscout-cases'))||[]}catch{return[]} }
+function setCases(cases){ localStorage.setItem('proofscout-cases',JSON.stringify(cases)); updateSavedCount(); }
+function updateSavedCount(){ $('#savedCount').textContent=getCases().length; }
+
+function renderCases(){
+  const cases=getCases(); $('#noCases').hidden=cases.length>0;
+  $('#caseList').innerHTML=cases.map(c=>{
+    const cls=c.score>=65?'high':c.score>=35?'warn':'';
+    return `<article class="case-card"><div><div class="case-meta"><span class="risk-pill ${cls}">${c.score}/100 risk</span><span>${escapeHTML(c.type)}</span><span>${new Date(c.timestamp).toLocaleDateString()}</span></div><h2>${escapeHTML(c.claims['Source domain']==='Not provided'?'Untitled opportunity':c.claims['Source domain'])}</h2><p>${escapeHTML(c.text.slice(0,150))}${c.text.length>150?'…':''}</p></div><button class="delete-case" data-id="${c.id}" aria-label="Delete saved case">Delete</button></article>`;
+  }).join('');
+  $$('.delete-case').forEach(btn=>btn.addEventListener('click',()=>{setCases(getCases().filter(c=>c.id!==btn.dataset.id));renderCases();toast('Case deleted');}));
+}
+
+function showView(name){
+  $$('.view').forEach(v=>{v.hidden=true;v.classList.remove('active')});
+  $$('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  const view=$(`#${name}View`); view.hidden=false; view.classList.add('active');
+  if(name==='cases')renderCases(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+$$('.type-chip').forEach(btn=>btn.addEventListener('click',()=>{selectedType=btn.dataset.type;$$('.type-chip').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-checked',b===btn?'true':'false')})}));
+$$('.sample-btn').forEach(btn=>btn.addEventListener('click',()=>{const s=samples[btn.dataset.sample];$('#sourceUrl').value=s.url;$('#sourceText').value=s.text;toast('Example loaded');}));
+$('#analyzeBtn').addEventListener('click',()=>{const text=$('#sourceText').value.trim();if(text.length<45){toast('Paste at least a few complete sentences');$('#sourceText').focus();return}render(analyze(text,$('#sourceUrl').value.trim()));});
+$('#clearBtn').addEventListener('click',()=>{$('#sourceText').value='';$('#sourceUrl').value='';$('#resultState').hidden=true;$('#emptyState').hidden=false;currentResult=null;});
+$('#saveBtn').addEventListener('click',()=>{if(!currentResult)return;const cases=getCases();cases.unshift({...currentResult,id:crypto.randomUUID?.()||String(Date.now())});setCases(cases.slice(0,20));toast('Case saved on this device');});
+$('#copyVerifyBtn').addEventListener('click',async()=>{if(!currentResult)return;try{await navigator.clipboard.writeText(verificationMessage(currentResult));toast('Verification request copied')}catch{toast('Clipboard permission was unavailable')}});
+$('#exportBtn').addEventListener('click',()=>{if(currentResult){exportEvidence(currentResult);toast('Evidence report exported')}});
+$('#printBtn').addEventListener('click',()=>window.print());
+$('#hausaToggle').addEventListener('click',()=>{const guide=$('#hausaGuide');guide.hidden=!guide.hidden;$('#hausaToggle').setAttribute('aria-expanded',String(!guide.hidden));$('#hausaToggle').textContent=guide.hidden?'Show Hausa guide':'Hide Hausa guide'});
+$('#themeToggle').addEventListener('click',()=>{document.body.classList.toggle('high-contrast');localStorage.setItem('proofscout-contrast',document.body.classList.contains('high-contrast')?'1':'0')});
+$$('.nav-link').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.view)));
+$$('[data-go]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.go)));
+if(localStorage.getItem('proofscout-contrast')==='1')document.body.classList.add('high-contrast');
+updateSavedCount();
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+  </script>
+</body>
+</html>
