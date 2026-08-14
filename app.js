@@ -223,6 +223,7 @@ function configureAssistantInstall(){
   const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua),isIOS=/iPhone|iPad|iPod/i.test(ua);
   const main=$('#assistantInstallBtn'),mobile=$('#mobileInstallLink'),mainLabel=$('.install-label'),mobileLabel=$('.mobile-install-label'),hint=$('#installHint');
   if(!main||!mobile)return;
+  if(main.dataset.pending==='true'){if(hint)hint.textContent='Mozilla approved the code. A public AMO listing is required for one-tap installation on Firefox Android.';return}
   const signed='9fb600ccaa8b44e2babe-1.0.1.xpi';
   if(isFirefox&&!isIOS){main.href=signed;mobile.href=signed;mainLabel.textContent='Install ProofScout Assistant';mobileLabel.textContent='Install';hint.textContent='Tap Install, review the permission, then approve. Scout will appear on normal websites.';return}
   if(isAndroid){
