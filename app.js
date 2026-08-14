@@ -14,6 +14,7 @@ const samples = {
 
 let selectedType = 'Competition';
 let currentResult = null;
+let importedReview = null;
 
 const rules = [
   {id:'fee', level:'high', points:28, test:t=>/(processing|registration|release|verification|activation|administrative|gas)\s+fee|pay.{0,30}(fee|deposit)|send.{0,20}(crypto|bitcoin|usdt|money)/i.test(t), title:'Upfront payment language', bad:'The offer asks for money before access, approval or prize release.', good:'No obvious upfront-payment request was detected.'},
@@ -126,6 +127,32 @@ function exportEvidence(r){
   const blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`proofscout-evidence-${Date.now()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
+function downloadJSON(data, filename){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function redactText(text=''){
+  return text
+    .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi,'[EMAIL REDACTED]')
+    .replace(/https?:\/\/\S+/gi,'[DIRECT LINK REDACTED]')
+    .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g,'[NUMBER REDACTED]')
+    .replace(/\b(?:[A-Z0-9]{12,})\b/g,'[IDENTIFIER REDACTED]');
+}
+function caseLabel(c){return `${c.claims?.['Source domain']||c.type||'Opportunity'} · ${c.score}/100 risk`;}
+function completenessFor(c){const vals=Object.values(c.claims||{});const found=vals.filter(v=>!['Not detected','Not stated','Not provided'].includes(v)).length;const hasRules=(c.signals||[]).some(s=>s.id==='rules'&&s.matched);return Math.min(100,Math.round((found/Math.max(1,vals.length))*80+(hasRules?20:0)));}
+function refreshCollaborationControls(){
+  const cases=getCases();
+  const options=cases.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(caseLabel(c))}</option>`).join('');
+  ['#compareA','#compareB','#relayCase'].forEach(sel=>{const el=$(sel);if(el)el.innerHTML=options||'<option value="">No saved cases</option>'});
+  if(cases.length>1) $('#compareB').selectedIndex=1;
+  $('#comparePanel').hidden=cases.length<2;
+  updateRedactionPreview();
+}
+function updateRedactionPreview(){
+  const c=getCases().find(x=>x.id===$('#relayCase')?.value);
+  const el=$('#redactionPreview');if(!el)return;
+  el.textContent=c ? redactText(c.text).slice(0,1800) : 'Save a case first to prepare a review request.';
+}
 function getCases(){ try{return JSON.parse(localStorage.getItem('proofscout-cases'))||[]}catch{return[]} }
 function setCases(cases){ localStorage.setItem('proofscout-cases',JSON.stringify(cases)); updateSavedCount(); }
 function updateSavedCount(){ $('#savedCount').textContent=getCases().length; }
@@ -137,13 +164,16 @@ function renderCases(){
     return `<article class="case-card"><div><div class="case-meta"><span class="risk-pill ${cls}">${c.score}/100 risk</span><span>${escapeHTML(c.type)}</span><span>${new Date(c.timestamp).toLocaleDateString()}</span></div><h2>${escapeHTML(c.claims['Source domain']==='Not provided'?'Untitled opportunity':c.claims['Source domain'])}</h2><p>${escapeHTML(c.text.slice(0,150))}${c.text.length>150?'…':''}</p></div><button class="delete-case" data-id="${c.id}" aria-label="Delete saved case">Delete</button></article>`;
   }).join('');
   $$('.delete-case').forEach(btn=>btn.addEventListener('click',()=>{setCases(getCases().filter(c=>c.id!==btn.dataset.id));renderCases();toast('Case deleted');}));
+  refreshCollaborationControls();
 }
 
 function showView(name){
   $$('.view').forEach(v=>{v.hidden=true;v.classList.remove('active')});
   $$('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
   const view=$(`#${name}View`); view.hidden=false; view.classList.add('active');
-  if(name==='cases')renderCases(); window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='cases')renderCases();
+  if(name==='relay')refreshCollaborationControls();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 $$('.type-chip').forEach(btn=>btn.addEventListener('click',()=>{selectedType=btn.dataset.type;$$('.type-chip').forEach(b=>{b.classList.toggle('active',b===btn);b.setAttribute('aria-checked',b===btn?'true':'false')})}));
@@ -155,6 +185,25 @@ $('#copyVerifyBtn').addEventListener('click',async()=>{if(!currentResult)return;
 $('#exportBtn').addEventListener('click',()=>{if(currentResult){exportEvidence(currentResult);toast('Evidence report exported')}});
 $('#printBtn').addEventListener('click',()=>window.print());
 $('#hausaToggle').addEventListener('click',()=>{const guide=$('#hausaGuide');guide.hidden=!guide.hidden;$('#hausaToggle').setAttribute('aria-expanded',String(!guide.hidden));$('#hausaToggle').textContent=guide.hidden?'Show Hausa guide':'Hide Hausa guide'});
+$('#relayCase').addEventListener('change',updateRedactionPreview);
+$('#compareBtn').addEventListener('click',()=>{
+  const cases=getCases(),a=cases.find(c=>c.id===$('#compareA').value),b=cases.find(c=>c.id===$('#compareB').value);if(!a||!b){toast('Choose two saved cases');return}
+  const safer=a.score<=b.score?a:b;
+  const side=c=>`<article class="compare-side ${c.id===safer.id?'winner':''}"><h3>${escapeHTML(c.claims['Source domain']||c.type)}</h3><div class="compare-stat"><span>Risk score</span><strong>${c.score}/100</strong></div><div class="compare-stat"><span>Evidence completeness</span><strong>${completenessFor(c)}%</strong></div><div class="compare-stat"><span>Concerns</span><strong>${(c.signals||[]).filter(s=>s.matched&&['warn','high'].includes(s.level)).length}</strong></div><div class="compare-stat"><span>Entry cost</span><strong>${escapeHTML(c.claims['Entry cost'])}</strong></div>${c.id===safer.id?'<p class="step">STRONGER CURRENT EVIDENCE</p>':''}</article>`;
+  $('#compareResult').innerHTML=side(a)+side(b);$('#compareResult').hidden=false;
+});
+$('#exportRequestBtn').addEventListener('click',()=>{
+  const c=getCases().find(x=>x.id===$('#relayCase').value);if(!c){toast('Save and choose a case first');return}
+  const request={kind:'proofscout-review-request',version:1,createdAt:new Date().toISOString(),requestId:crypto.randomUUID?.()||String(Date.now()),case:{type:c.type,riskScore:c.score,claims:c.claims,concerns:(c.signals||[]).filter(s=>s.matched&&['warn','high'].includes(s.level)).map(s=>({signal:s.title,explanation:s.message})),announcement:$('#includeText').checked?redactText(c.text):'[NOT INCLUDED]'}};
+  downloadJSON(request,`proofscout-second-opinion-${Date.now()}.json`);toast('Redacted review request exported');
+});
+$('#reviewFile').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{const data=JSON.parse(await file.text());if(data.kind!=='proofscout-review-request'||!data.case)throw new Error();importedReview=data;const c=data.case;$('#reviewSummary').innerHTML=`<strong>${escapeHTML(c.type)} · ${c.riskScore}/100 initial risk</strong><p>${escapeHTML(c.claims?.['Source domain']||'No source domain')} · ${escapeHTML(c.claims?.['Entry cost']||'Cost unknown')}</p><div class="redaction-preview">${escapeHTML(c.announcement||'No announcement included')}</div>`;$('#reviewWorkspace').hidden=false;toast('Review request opened locally')}catch{importedReview=null;$('#reviewWorkspace').hidden=true;toast('This is not a valid ProofScout request')}
+});
+$('#exportResponseBtn').addEventListener('click',()=>{
+  if(!importedReview){toast('Import a review request first');return}const response={kind:'proofscout-review-response',version:1,requestId:importedReview.requestId,reviewedAt:new Date().toISOString(),assessment:$('#reviewVerdict').value,notes:$('#reviewNotes').value.trim(),safetyNotice:'This is a human second opinion, not a guarantee of legitimacy.'};downloadJSON(response,`proofscout-review-response-${Date.now()}.json`);toast('Review response exported')
+});
 $('#themeToggle').addEventListener('click',()=>{document.body.classList.toggle('high-contrast');localStorage.setItem('proofscout-contrast',document.body.classList.contains('high-contrast')?'1':'0')});
 $$('.nav-link').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.view)));
 $$('[data-go]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.go)));

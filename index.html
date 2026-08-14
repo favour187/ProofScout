@@ -19,6 +19,7 @@
     <nav aria-label="Primary navigation">
       <button class="nav-link active" data-view="scanner">Inspect</button>
       <button class="nav-link" data-view="cases">Saved <span id="savedCount" class="count">0</span></button>
+      <button class="nav-link" data-view="relay">Second opinion</button>
       <button class="nav-link" data-view="guide">Safety guide</button>
     </nav>
     <button id="themeToggle" class="icon-btn" aria-label="Toggle high contrast" title="Toggle high contrast">◐</button>
@@ -131,8 +132,48 @@
 
     <section id="casesView" class="view narrow" hidden aria-labelledby="casesTitle">
       <div class="page-heading"><p class="eyebrow">Local evidence locker</p><h1 id="casesTitle">Saved cases</h1><p>Cases stay on this device and can be deleted at any time.</p></div>
+      <section id="comparePanel" class="compare-panel" hidden aria-labelledby="compareTitle">
+        <div><p class="step">DECISION WORKSPACE</p><h2 id="compareTitle">Compare two opportunities</h2><p>See which offer exposes stronger evidence and fewer danger signals.</p></div>
+        <div class="compare-controls">
+          <label>First case<select id="compareA"></select></label>
+          <span aria-hidden="true">versus</span>
+          <label>Second case<select id="compareB"></select></label>
+          <button id="compareBtn" class="primary-btn small">Compare</button>
+        </div>
+        <div id="compareResult" class="compare-result" hidden></div>
+      </section>
       <div id="caseList" class="case-list"></div>
       <div id="noCases" class="empty-panel"><h2>No saved cases</h2><p>Inspect an opportunity and save the report to compare it later.</p><button class="primary-btn small" data-go="scanner">Inspect one now</button></div>
+    </section>
+
+    <section id="relayView" class="view narrow" hidden aria-labelledby="relayTitle">
+      <div class="page-heading"><p class="eyebrow">Human verification without surveillance</p><h1 id="relayTitle">Get a second opinion.</h1><p>Send a redacted case file to someone you trust. They can review the evidence offline and return a structured response.</p></div>
+      <div class="relay-grid">
+        <article class="relay-card">
+          <span class="relay-number">01</span><h2>Create a safe review request</h2>
+          <p>ProofScout removes common emails, phone numbers, account-like numbers and direct URLs from the copied announcement.</p>
+          <label for="relayCase">Choose a saved case</label>
+          <select id="relayCase"></select>
+          <label class="check-row"><input id="includeText" type="checkbox" checked> Include automatically redacted announcement text</label>
+          <div id="redactionPreview" class="redaction-preview">Save a case first to prepare a review request.</div>
+          <button id="exportRequestBtn" class="primary-btn"><span>Export second-opinion file</span><span>↓</span></button>
+        </article>
+        <article class="relay-card">
+          <span class="relay-number">02</span><h2>Review someone’s case</h2>
+          <p>Import a ProofScout request. No file contents are uploaded anywhere.</p>
+          <label class="file-drop" for="reviewFile"><strong>Choose .json review file</strong><span>Processed only on this device</span></label>
+          <input id="reviewFile" class="visually-hidden" type="file" accept="application/json,.json">
+          <div id="reviewWorkspace" hidden>
+            <div id="reviewSummary" class="review-summary"></div>
+            <label for="reviewVerdict">Your assessment</label>
+            <select id="reviewVerdict"><option value="official">Evidence independently confirmed</option><option value="more-proof" selected>More proof is needed</option><option value="unsafe">Likely unsafe — do not proceed</option></select>
+            <label for="reviewNotes">What did you verify?</label>
+            <textarea id="reviewNotes" rows="5" placeholder="Mention official pages checked, mismatched claims, or questions that remain."></textarea>
+            <button id="exportResponseBtn" class="primary-btn"><span>Export review response</span><span>→</span></button>
+          </div>
+        </article>
+      </div>
+      <aside class="relay-why"><strong>Why files instead of accounts?</strong><p>People with limited data, shared devices or privacy concerns can still ask a teacher, parent, mentor or friend for help. The case can travel through Bluetooth, USB or local sharing without creating a public profile.</p></aside>
     </section>
 
     <section id="guideView" class="view narrow" hidden aria-labelledby="guideTitle">

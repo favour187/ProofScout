@@ -20,6 +20,10 @@ ProofScout runs entirely in the browser. Pasted messages and saved cases never l
 - Safe verification-message generator for contacting organizers
 - Exportable, machine-readable evidence reports
 - Local evidence locker for saved cases
+- Side-by-side opportunity comparison with risk, evidence and concern counts
+- Privacy-preserving second-opinion workflow for teachers, parents, mentors or friends
+- Automatic redaction of emails, direct links, phone/account-like numbers and identifiers
+- Offline export/import of structured review requests and human review responses
 - Credible and suspicious built-in demo scenarios
 - Print-friendly report
 - English and Hausa safety guidance
