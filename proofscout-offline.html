@@ -35,7 +35,7 @@
           <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
           <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
           <span class="offline-download"><span>Zero-data edition active</span><span aria-hidden="true">✓</span></span>
-          <p class="offline-explain">This complete scanner is running from one local file and makes no network requests.</p>
+          <p class="offline-explain">This complete scanner runs from one local file and makes no network requests.</p>
           <div class="hero-badges" aria-label="Product assurances">
             <span>● Reads aloud</span><span>● Checks the current page</span><span>● No uploads</span>
           </div>
@@ -53,7 +53,7 @@
 
       <section class="simple-flow" aria-labelledby="simpleTitle">
         <div><p class="step">THE SIMPLE WAY</p><h2 id="simpleTitle">One install. Scout stays with you.</h2></div>
-        <ol><li><span>1</span><strong>Tap Install</strong><small>Open this site in Firefox and tap the green button.</small></li><li><span>2</span><strong>Approve permission</strong><small>Firefox clearly shows the page access Scout needs.</small></li><li><span>3</span><strong>Tap the floating P</strong><small>Inspect, diagnose or hear any normal page without leaving it.</small></li></ol>
+        <ol><li><span>1</span><strong>Tap Install</strong><small>If Android asks, choose Firefox—not Chrome.</small></li><li><span>2</span><strong>Approve permission</strong><small>The signed add-on opens directly in Firefox.</small></li><li><span>3</span><strong>Tap the floating P</strong><small>Inspect, diagnose or hear any normal page without leaving it.</small></li></ol>
       </section>
 
       <section class="scout-strip" aria-labelledby="scoutTitle">
@@ -444,8 +444,8 @@ function configureAssistantInstall(){
   if(isFirefox&&!isIOS){main.href=signed;mobile.href=signed;mainLabel.textContent='Install ProofScout Assistant';mobileLabel.textContent='Install';hint.textContent='Tap Install, review the permission, then approve. Scout will appear on normal websites.';return}
   if(isAndroid){
     const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=org.mozilla.firefox');
-    const intent=`intent://favour187.github.io/ProofScout/#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
-    main.href=intent;mobile.href=intent;mainLabel.textContent='Open in Firefox to Install';mobileLabel.textContent='Open Firefox';hint.textContent='ProofScout needs Firefox on mobile. This button opens Firefox—or its free Play Store page if it is not installed.';return
+    const intent=`intent://favour187.github.io/ProofScout/${signed}#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
+    main.href=intent;mobile.href=intent;mainLabel.textContent='Install with Firefox';mobileLabel.textContent='Install';hint.textContent='If Android asks which app to use, choose Firefox. It will open the signed add-on permission screen immediately.';return
   }
   main.href='https://www.mozilla.org/firefox/new/';mobile.href='https://www.mozilla.org/firefox/new/';mainLabel.textContent='Get Firefox to Install';mobileLabel.textContent='Get Firefox';hint.textContent='Install Firefox free, then return to this page and tap Install ProofScout Assistant.';
 }

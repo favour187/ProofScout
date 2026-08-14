@@ -227,8 +227,8 @@ function configureAssistantInstall(){
   if(isFirefox&&!isIOS){main.href=signed;mobile.href=signed;mainLabel.textContent='Install ProofScout Assistant';mobileLabel.textContent='Install';hint.textContent='Tap Install, review the permission, then approve. Scout will appear on normal websites.';return}
   if(isAndroid){
     const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=org.mozilla.firefox');
-    const intent=`intent://favour187.github.io/ProofScout/#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
-    main.href=intent;mobile.href=intent;mainLabel.textContent='Open in Firefox to Install';mobileLabel.textContent='Open Firefox';hint.textContent='ProofScout needs Firefox on mobile. This button opens Firefox—or its free Play Store page if it is not installed.';return
+    const intent=`intent://favour187.github.io/ProofScout/${signed}#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
+    main.href=intent;mobile.href=intent;mainLabel.textContent='Install with Firefox';mobileLabel.textContent='Install';hint.textContent='If Android asks which app to use, choose Firefox. It will open the signed add-on permission screen immediately.';return
   }
   main.href='https://www.mozilla.org/firefox/new/';mobile.href='https://www.mozilla.org/firefox/new/';mainLabel.textContent='Get Firefox to Install';mobileLabel.textContent='Get Firefox';hint.textContent='Install Firefox free, then return to this page and tap Install ProofScout Assistant.';
 }
