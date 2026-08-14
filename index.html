@@ -36,10 +36,10 @@
             <span>● No account</span><span>● No uploads</span><span>● No API or repeated data</span>
           </div>
           <div class="download-row">
-            <a class="offline-download" href="extension/proofscout-extension.zip" download><span>Get Chrome page assistant</span><span aria-hidden="true">↗</span></a>
-            <a class="offline-download" href="proofscout-offline.html" download><span>Get zero-data edition</span><span aria-hidden="true">↓</span></a>
+            <button id="installBtn" class="offline-download install-primary"><span>Install ProofScout app</span><span aria-hidden="true">＋</span></button>
+            <a class="offline-download advanced-download" href="extension/proofscout-extension.zip" download><span>Advanced browser assistant</span><span aria-hidden="true">↗</span></a>
           </div>
-          <p class="offline-explain">Use Scout on the page you are already viewing, or carry the complete scanner as one offline file.</p>
+          <p id="installHint" class="offline-explain">Install once. Then use Share → ProofScout from an opportunity page.</p>
         </div>
         <div class="hero-art" aria-hidden="true">
           <svg viewBox="0 0 360 250" role="img">
@@ -51,6 +51,11 @@
           </svg>
         </div>
       </div>
+
+      <section class="simple-flow" aria-labelledby="simpleTitle">
+        <div><p class="step">THE SIMPLE WAY</p><h2 id="simpleTitle">No copying. No switching back and forth.</h2></div>
+        <ol><li><span>1</span><strong>Install once</strong><small>Tap “Install ProofScout app.”</small></li><li><span>2</span><strong>Share the page</strong><small>On the opportunity page, tap Share.</small></li><li><span>3</span><strong>Choose ProofScout</strong><small>The link and shared text open ready to inspect.</small></li></ol>
+      </section>
 
       <section class="scout-strip" aria-labelledby="scoutTitle">
         <div class="scout-orb-demo" aria-hidden="true"><span>P</span><i></i><i></i><i></i></div>

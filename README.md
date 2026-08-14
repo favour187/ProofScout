@@ -45,9 +45,13 @@ This is intentionally an explainable screening model rather than a black-box cla
 
 Saved cases and display preferences use browser local storage. A service worker caches the application shell for offline use.
 
-## Chrome page assistant
+## Simplest user flow: install and share
 
-The `extension` directory contains ProofScout Scout. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages.
+On supported Android/Chrome devices, open the hosted ProofScout site and tap **Install ProofScout app**. Afterwards, while viewing an opportunity page, use the browser's normal **Share** action and choose **ProofScout**. The shared title, text and URL open in the installed app ready for inspection. This uses the standard PWA Web Share Target API and requires no browser developer settings.
+
+## Advanced Chrome page assistant
+
+The `extension` directory contains the optional ProofScout Scout extension for current-page DOM and bug diagnosis. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages. Public one-click extension installation would require publishing through a browser extension store.
 
 ## Run locally
 

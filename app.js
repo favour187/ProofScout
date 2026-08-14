@@ -15,6 +15,7 @@ const samples = {
 let selectedType = 'Competition';
 let currentResult = null;
 let importedReview = null;
+let installPrompt = null;
 
 const rules = [
   {id:'fee', level:'high', points:28, test:t=>/(processing|registration|release|verification|activation|administrative|gas)\s+fee|pay.{0,30}(fee|deposit)|send.{0,20}(crypto|bitcoin|usdt|money)/i.test(t), title:'Upfront payment language', bad:'The offer asks for money before access, approval or prize release.', good:'No obvious upfront-payment request was detected.'},
@@ -209,4 +210,21 @@ $$('.nav-link').forEach(btn=>btn.addEventListener('click',()=>showView(btn.datas
 $$('[data-go]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.go)));
 if(localStorage.getItem('proofscout-contrast')==='1')document.body.classList.add('high-contrast');
 updateSavedCount();
-if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;if($('#installHint'))$('#installHint').textContent='Ready to install — one tap, no app store required.'});
+$('#installBtn')?.addEventListener('click',async()=>{
+  if(installPrompt){installPrompt.prompt();const result=await installPrompt.userChoice;$('#installHint').textContent=result.outcome==='accepted'?'Installed. On another page, tap Share → ProofScout.':'You can install whenever you are ready.';installPrompt=null;return}
+  if(window.matchMedia('(display-mode: standalone)').matches){toast('ProofScout is already installed');return}
+  $('#installHint').textContent='In Chrome, open the menu and tap “Install app” or “Add to Home screen.”';toast('Use Chrome menu → Install app');
+});
+window.addEventListener('appinstalled',()=>{if($('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
+
+function openSharedPage(){
+  const p=new URLSearchParams(location.search);if(p.get('shared')!=='1')return;
+  const title=p.get('title')||'Shared opportunity page',text=p.get('text')||'',url=p.get('url')||'';
+  showView('scanner');$('#sourceUrl').value=url;$('#sourceText').value=[title,text,url?`Shared source: ${url}`:''].filter(Boolean).join('\n\n');
+  history.replaceState({},'',location.pathname+'#inspect');
+  const combined=$('#sourceText').value.trim();if(combined.length>=45){render(analyze(combined,url));toast('Shared page opened and inspected')}else{toast('Shared page opened — add any important wording you can see')}
+}
+
+if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(openSharedPage).catch(()=>openSharedPage())); else openSharedPage();

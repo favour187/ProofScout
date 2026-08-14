@@ -1,12 +1,28 @@
 {
   "name": "ProofScout — Trust before you apply",
   "short_name": "ProofScout",
+  "id": "./",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#101218",
   "theme_color": "#101218",
   "description": "Private, explainable screening for online opportunities.",
   "icons": [
     {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ],
+  "share_target": {
+    "action": "./?shared=1",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "shortcuts": [
+    {"name":"Inspect an opportunity","short_name":"Inspect","url":"./#inspect","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]},
+    {"name":"Safety guide","short_name":"Safety guide","url":"./#guide","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]}
   ]
 }
