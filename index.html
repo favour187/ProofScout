@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#101218" />
+  <meta name="description" content="ProofScout helps people inspect online opportunities before sharing money or personal information." />
+  <title>ProofScout — Trust before you apply</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="ProofScout home">
+      <span class="brand-mark" aria-hidden="true">P</span>
+      <span>ProofScout</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <button class="nav-link active" data-view="scanner">Inspect</button>
+      <button class="nav-link" data-view="cases">Saved <span id="savedCount" class="count">0</span></button>
+      <button class="nav-link" data-view="guide">Safety guide</button>
+    </nav>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle high contrast" title="Toggle high contrast">◐</button>
+  </header>
+
+  <main id="main">
+    <section id="scannerView" class="view active" aria-labelledby="pageTitle">
+      <div class="hero">
+        <div>
+          <p class="eyebrow">Private, explainable opportunity screening</p>
+          <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
+          <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
+          <div class="hero-badges" aria-label="Product assurances">
+            <span>● No account</span><span>● No uploads</span><span>● Works offline</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 360 250" role="img">
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bcff5c"/><stop offset="1" stop-color="#6ee7ff"/></linearGradient></defs>
+            <path d="M62 27h191c19 0 34 15 34 34v108c0 19-15 34-34 34H62c-19 0-34-15-34-34V61c0-19 15-34 34-34Z" fill="#181b23" stroke="#343946"/>
+            <rect x="52" y="53" width="142" height="13" rx="6.5" fill="#343946"/><rect x="52" y="80" width="205" height="8" rx="4" fill="#282c37"/><rect x="52" y="99" width="172" height="8" rx="4" fill="#282c37"/><rect x="52" y="118" width="196" height="8" rx="4" fill="#282c37"/>
+            <circle cx="264" cy="178" r="58" fill="#101218" stroke="url(#g)" stroke-width="8"/><path d="m243 178 14 14 29-34" fill="none" stroke="url(#g)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="49" cy="177" r="8" fill="#ffb36b"/><path d="M77 177h91" stroke="#343946" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <section class="input-card" aria-labelledby="inputHeading">
+          <div class="section-head">
+            <div><p class="step">01 · SOURCE MATERIAL</p><h2 id="inputHeading">What were you sent?</h2></div>
+            <button id="clearBtn" class="text-btn">Clear</button>
+          </div>
+          <label for="oppType">Opportunity type</label>
+          <div class="type-row" id="typeRow" role="radiogroup" aria-label="Opportunity type">
+            <button class="type-chip active" role="radio" aria-checked="true" data-type="Competition">Competition</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Job">Job</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Grant">Grant</button>
+            <button class="type-chip" role="radio" aria-checked="false" data-type="Scholarship">Scholarship</button>
+          </div>
+          <label for="sourceUrl">Source URL <span>optional</span></label>
+          <input id="sourceUrl" type="url" placeholder="https://official-website.org/opportunity" autocomplete="off" />
+          <label for="sourceText">Paste the announcement, message or requirements</label>
+          <textarea id="sourceText" rows="11" placeholder="Paste everything you received. More context produces a clearer evidence map."></textarea>
+          <div class="samples">
+            <span>Try an example:</span>
+            <button class="sample-btn" data-sample="credible">Credible competition</button>
+            <button class="sample-btn danger-link" data-sample="risky">Suspicious offer</button>
+          </div>
+          <button id="analyzeBtn" class="primary-btn"><span>Inspect opportunity</span><span aria-hidden="true">→</span></button>
+          <p class="privacy-note">Your text never leaves this browser. ProofScout is a screening aid, not a guarantee of legitimacy.</p>
+        </section>
+
+        <section id="emptyState" class="result-card empty" aria-live="polite">
+          <div class="radar" aria-hidden="true"><span></span><i></i></div>
+          <h2>Evidence appears here</h2>
+          <p>ProofScout looks for payment pressure, identity requests, deadline language, contact methods, eligibility and missing verification signals.</p>
+          <ol>
+            <li><span>1</span> Paste the complete offer</li>
+            <li><span>2</span> Inspect each signal</li>
+            <li><span>3</span> Verify before acting</li>
+          </ol>
+        </section>
+
+        <section id="resultState" class="result-card" hidden aria-live="polite" aria-labelledby="resultTitle">
+          <div class="result-top">
+            <div>
+              <p class="step">02 · EVIDENCE MAP</p>
+              <h2 id="resultTitle">Inspection result</h2>
+            </div>
+            <div id="scoreDial" class="score-dial" role="img" aria-label="Risk score">
+              <strong id="scoreValue">0</strong><span>/100 risk</span>
+            </div>
+          </div>
+          <div id="verdict" class="verdict">
+            <span id="verdictIcon" aria-hidden="true">✓</span>
+            <div><strong id="verdictTitle">Lower-risk signals</strong><p id="verdictCopy"></p></div>
+          </div>
+          <div class="extracted">
+            <h3>Claims detected</h3>
+            <div id="claimGrid" class="claim-grid"></div>
+          </div>
+          <div class="signals">
+            <div class="signals-head"><h3>Why this score?</h3><span id="signalSummary"></span></div>
+            <div id="signalList"></div>
+          </div>
+          <div class="completeness">
+            <div class="completeness-head"><h3>Evidence completeness</h3><strong id="completeValue">0%</strong></div>
+            <div class="meter" aria-hidden="true"><span id="completeBar"></span></div>
+            <p id="completeCopy"></p>
+          </div>
+          <div class="next-actions">
+            <h3>Before you continue</h3>
+            <div id="actionList"></div>
+          </div>
+          <div class="verify-box">
+            <div><h3>Ask the organizer</h3><p>Generate a neutral message that confirms the important claims without revealing sensitive information.</p></div>
+            <button id="copyVerifyBtn" class="secondary-btn">Copy verification request</button>
+          </div>
+          <div class="result-actions">
+            <button id="saveBtn" class="secondary-btn">Save case locally</button>
+            <button id="exportBtn" class="secondary-btn">Export evidence</button>
+            <button id="printBtn" class="secondary-btn">Print report</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="casesView" class="view narrow" hidden aria-labelledby="casesTitle">
+      <div class="page-heading"><p class="eyebrow">Local evidence locker</p><h1 id="casesTitle">Saved cases</h1><p>Cases stay on this device and can be deleted at any time.</p></div>
+      <div id="caseList" class="case-list"></div>
+      <div id="noCases" class="empty-panel"><h2>No saved cases</h2><p>Inspect an opportunity and save the report to compare it later.</p><button class="primary-btn small" data-go="scanner">Inspect one now</button></div>
+    </section>
+
+    <section id="guideView" class="view narrow" hidden aria-labelledby="guideTitle">
+      <div class="page-heading"><p class="eyebrow">Five-minute verification method</p><h1 id="guideTitle">Stop. Trace. Confirm.</h1><p>A repeatable process for any online opportunity.</p></div>
+      <div class="guide-grid">
+        <article><span>01</span><h2>Stop the clock</h2><p>Urgency is not proof. Legitimate opportunities usually publish dates and allow independent verification.</p></article>
+        <article><span>02</span><h2>Trace the source</h2><p>Navigate to the organizer’s official website yourself. Do not rely only on a link inside a forwarded message.</p></article>
+        <article><span>03</span><h2>Confirm the people</h2><p>Check whether organizers, judges and partners acknowledge the opportunity on their own official channels.</p></article>
+        <article><span>04</span><h2>Protect credentials</h2><p>Never share passwords, one-time codes, seed phrases or remote access. Question early requests for identity documents.</p></article>
+        <article><span>05</span><h2>Separate fees from prizes</h2><p>A prize that requires a rushed “release,” “processing,” “gas” or “verification” payment is a major warning sign.</p></article>
+        <article><span>06</span><h2>Preserve evidence</h2><p>Keep the original message, URLs and screenshots. Report impersonation through the real organization’s website.</p></article>
+      </div>
+      <aside class="safety-callout"><strong>If money or identity is at risk</strong><p>Pause the transaction. Contact your bank or payment provider through its official app or website and change exposed credentials immediately.</p></aside>
+      <aside class="language-card">
+        <div><p class="step">ACCESSIBLE SAFETY</p><h2>Quick guidance in Hausa</h2></div>
+        <button id="hausaToggle" class="secondary-btn" aria-expanded="false">Show Hausa guide</button>
+        <div id="hausaGuide" hidden lang="ha">
+          <p><strong>Ka tsaya kafin ka biya kuɗi.</strong> Ka bincika sanarwar ta shafin hukuma, ba ta hanyar saƙon da aka turo maka kawai ba.</p>
+          <p>Kada ka ba kowa kalmar sirri, lambar OTP, bayanan shiga banki ko seed phrase. Hukuma ta gaskiya ba za ta nemi waɗannan bayanan ba.</p>
+          <p>Idan ana matsa maka ka biya “processing fee” domin a saki kyauta, ka dakata ka tuntubi hukumar ta hanyar shafinta na hukuma.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer><span>ProofScout</span><span>Built for safer opportunity access · Data stays on your device</span></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
