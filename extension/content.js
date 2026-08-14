@@ -65,25 +65,54 @@
     return {score,issues,danger,warnings,headline:danger?'Security-impacting page problems':warnings?'Quality and accessibility bugs found':'No common DOM bug detected',copy:danger?'Avoid sensitive actions until the security-impacting issues are fixed.':warnings?'The page works, but these issues can exclude users or break interactions.':'Automated checks cannot find every bug; manual testing is still necessary.'};
   }
 
-  const root=document.createElement('div');root.id=PS_ID;
-  root.innerHTML=`<div id="proofscout-panel" role="dialog" aria-label="ProofScout page assistant"><div class="ps-head"><span class="ps-mark">P</span><div class="ps-title"><strong>Scout</strong><span>Private page intelligence</span></div><button class="ps-icon" id="ps-speak" title="Read summary aloud">◖</button><button class="ps-icon" id="ps-mic" title="Voice command">●</button><button class="ps-icon" id="ps-close" aria-label="Close">×</button></div><div class="ps-tabs"><button class="ps-tab ps-active" data-tab="opportunity">Opportunity</button><button class="ps-tab" data-tab="url">URL</button><button class="ps-tab" data-tab="bugs">Bug doctor</button></div><div class="ps-body" id="ps-body"></div><div class="ps-footer"><span>On-device analysis · no upload</span><span class="ps-listen" id="ps-status">Ready</span></div></div><button id="proofscout-orb" aria-label="Open ProofScout page assistant" title="Ask Scout about this page">P</button>`;
-  document.documentElement.appendChild(root);
-  const panel=root.querySelector('#proofscout-panel'), body=root.querySelector('#ps-body'), orb=root.querySelector('#proofscout-orb');
+  const make=(tag,className,text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=String(text);return node};
+  const root=make('div');root.id=PS_ID;
+  const panel=make('div');panel.id='proofscout-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','ProofScout page assistant');
+  const head=make('div','ps-head'),mark=make('span','ps-mark','P'),title=make('div','ps-title');title.append(make('strong','','Scout'),make('span','','Private page intelligence'));
+  const iconButton=(id,label,titleText)=>{const b=make('button','ps-icon',label);b.id=id;b.type='button';b.title=titleText;return b};
+  head.append(mark,title,iconButton('ps-speak','◖','Read summary aloud'),iconButton('ps-mic','●','Voice command'),iconButton('ps-close','×','Close'));
+  const tabs=make('div','ps-tabs');[['opportunity','Opportunity'],['url','URL'],['bugs','Bug doctor']].forEach(([id,label],i)=>{const b=make('button',`ps-tab${i===0?' ps-active':''}`,label);b.type='button';b.dataset.tab=id;tabs.append(b)});
+  const body=make('div','ps-body');body.id='ps-body';
+  const footer=make('div','ps-footer'),statusNode=make('span','ps-listen','Ready');statusNode.id='ps-status';footer.append(make('span','','On-device analysis · no upload'),statusNode);
+  panel.append(head,tabs,body,footer);
+  const orb=make('button','','P');orb.id='proofscout-orb';orb.type='button';orb.setAttribute('aria-label','Open ProofScout page assistant');orb.title='Ask Scout about this page';
+  root.append(panel,orb);document.documentElement.appendChild(root);
   let active='opportunity', lastSummary='';
-  const signalHTML=(s,i)=>`<div class="ps-signal ${s.level==='danger'?'ps-danger':s.level==='warn'?'ps-warn':''}"><span class="ps-dot">${s.level==='safe'?'✓':'!'}</span><div><strong>${safeText(s.title)}${s.count?` · ${s.count}`:''}</strong><p>${safeText(s.copy)}</p>${s.nodes?.length?`<button class="ps-secondary ps-highlight" data-issue="${i}">Show on page</button>`:''}</div></div>`;
+  function appendHero(headline,copy,score,suffix,level){
+    const hero=make('div',`ps-hero ${level||''}`),scoreRow=make('div','ps-score');
+    scoreRow.append(make('strong','',headline),make('span','',`${score}/100 ${suffix}`));
+    hero.append(scoreRow,make('p','',copy));body.append(hero);
+  }
+  function appendStats(items){
+    const grid=make('div','ps-stat-grid');
+    items.forEach(([label,value])=>{const stat=make('div','ps-stat');stat.append(make('span','',label),make('strong','',value));grid.append(stat)});
+    body.append(grid);return grid;
+  }
+  function appendSignal(s,index,enableHighlight=false){
+    const row=make('div',`ps-signal ${s.level==='danger'?'ps-danger':s.level==='warn'?'ps-warn':''}`),dot=make('span','ps-dot',s.level==='safe'?'✓':'!'),details=make('div');
+    details.append(make('strong','',`${s.title}${s.count?` · ${s.count}`:''}`),make('p','',s.copy));
+    if(enableHighlight&&s.nodes?.length){const button=make('button','ps-secondary ps-highlight','Show on page');button.type='button';button.addEventListener('click',()=>{document.querySelectorAll('.proofscout-highlight').forEach(e=>e.classList.remove('proofscout-highlight'));s.nodes.slice(0,15).forEach(e=>e?.classList?.add('proofscout-highlight'));s.nodes[0]?.scrollIntoView?.({behavior:'smooth',block:'center'});status(`${s.count} element${s.count===1?'':'s'} highlighted`)});details.append(button)}
+    row.append(dot,details);body.append(row);
+  }
+  function appendSectionTitle(text){body.append(make('div','ps-section-title',text))}
+  function appendEmpty(text){body.append(make('div','ps-empty',text))}
   function render(tab){
-    active=tab; root.querySelectorAll('.ps-tab').forEach(b=>b.classList.toggle('ps-active',b.dataset.tab===tab));
+    active=tab;body.replaceChildren();root.querySelectorAll('.ps-tab').forEach(b=>b.classList.toggle('ps-active',b.dataset.tab===tab));
     if(tab==='opportunity'){
       const r=opportunityScan();lastSummary=`ProofScout found a risk score of ${r.score} out of 100. ${r.headline}. ${r.copy}`;
-      body.innerHTML=`<div class="ps-hero ${r.score>=65?'ps-danger':r.score>=35?'ps-warn':''}"><div class="ps-score"><strong>${safeText(r.headline)}</strong><span>${r.score}/100 risk</span></div><p>${safeText(r.copy)}</p></div><div class="ps-stat-grid"><div class="ps-stat"><span>Page words checked</span><strong>${Math.round(r.textLength/5).toLocaleString()}</strong></div><div class="ps-stat"><span>Signals explained</span><strong>${r.signals.length}</strong></div></div><div class="ps-section-title">Page signals</div>${r.signals.length?r.signals.map(signalHTML).join(''):'<div class="ps-empty">No common opportunity-pressure phrase was detected. Verify the organizer independently.</div>'}<button class="ps-action" id="ps-copy"><span>Copy verification questions</span><span>→</span></button>`;
-      root.querySelector('#ps-copy')?.addEventListener('click',()=>navigator.clipboard.writeText(`I am independently verifying this page before I continue. Please confirm the official deadline, eligibility, complete rules, all fees, the authorized application domain, and the correct organizer contact through an official channel. For security, I will not send passwords, OTP codes, seed phrases or banking logins.`).then(()=>status('Questions copied')).catch(()=>status('Clipboard blocked')));
+      appendHero(r.headline,r.copy,r.score,'risk',r.score>=65?'ps-danger':r.score>=35?'ps-warn':'');
+      appendStats([['Page words checked',Math.round(r.textLength/5).toLocaleString()],['Signals explained',r.signals.length]]);appendSectionTitle('Page signals');
+      if(r.signals.length)r.signals.forEach((s,i)=>appendSignal(s,i));else appendEmpty('No common opportunity-pressure phrase was detected. Verify the organizer independently.');
+      const copyButton=make('button','ps-action');copyButton.id='ps-copy';copyButton.type='button';copyButton.append(make('span','','Copy verification questions'),make('span','','→'));body.append(copyButton);
+      copyButton.addEventListener('click',()=>navigator.clipboard.writeText('I am independently verifying this page before I continue. Please confirm the official deadline, eligibility, complete rules, all fees, the authorized application domain, and the correct organizer contact through an official channel. For security, I will not send passwords, OTP codes, seed phrases or banking logins.').then(()=>status('Questions copied')).catch(()=>status('Clipboard blocked')));
     }else if(tab==='url'){
       const r=urlScan();lastSummary=`URL check for ${r.domain}. Risk score ${r.score} out of 100. ${r.headline}. ${r.copy}`;
-      body.innerHTML=`<div class="ps-hero ${r.score>=50?'ps-danger':r.score?'ps-warn':''}"><div class="ps-score"><strong>${safeText(r.headline)}</strong><span>${r.score}/100 risk</span></div><p>${safeText(r.copy)}</p></div><div class="ps-url">${safeText(location.href)}</div><div class="ps-stat-grid" style="margin-top:8px"><div class="ps-stat"><span>Protocol</span><strong>${safeText(r.protocol.toUpperCase())}</strong></div><div class="ps-stat"><span>Domain labels</span><strong>${r.domain.split('.').length}</strong></div></div><div class="ps-section-title">URL signals</div>${r.signals.map(signalHTML).join('')}`;
+      appendHero(r.headline,r.copy,r.score,'risk',r.score>=50?'ps-danger':r.score?'ps-warn':'');body.append(make('div','ps-url',location.href));
+      const grid=appendStats([['Protocol',r.protocol.toUpperCase()],['Domain labels',r.domain.split('.').length]]);grid.style.marginTop='8px';appendSectionTitle('URL signals');r.signals.forEach((s,i)=>appendSignal(s,i));
     }else{
       const r=bugScan();window.__proofScoutIssues=r.issues;lastSummary=`Bug doctor found ${r.danger} security-impacting problems and ${r.warnings} quality or accessibility problems. ${r.copy}`;
-      body.innerHTML=`<div class="ps-hero ${r.danger?'ps-danger':r.warnings?'ps-warn':''}"><div class="ps-score"><strong>${safeText(r.headline)}</strong><span>${r.score}/100 severity</span></div><p>${safeText(r.copy)}</p></div><div class="ps-stat-grid"><div class="ps-stat"><span>Security-impacting</span><strong>${r.danger}</strong></div><div class="ps-stat"><span>Quality / access</span><strong>${r.warnings}</strong></div></div><div class="ps-section-title">Diagnosed issues</div>${r.issues.length?r.issues.map(signalHTML).join(''):'<div class="ps-empty">No common structural bug found. Test interactions, content accuracy and server behavior manually.</div>'}`;
-      root.querySelectorAll('.ps-highlight').forEach(btn=>btn.addEventListener('click',()=>{const issue=r.issues[Number(btn.dataset.issue)];document.querySelectorAll('.proofscout-highlight').forEach(e=>e.classList.remove('proofscout-highlight'));issue.nodes.slice(0,15).forEach(e=>e?.classList?.add('proofscout-highlight'));issue.nodes[0]?.scrollIntoView?.({behavior:'smooth',block:'center'});status(`${issue.count} element${issue.count===1?'':'s'} highlighted`)}));
+      appendHero(r.headline,r.copy,r.score,'severity',r.danger?'ps-danger':r.warnings?'ps-warn':'');appendStats([['Security-impacting',r.danger],['Quality / access',r.warnings]]);appendSectionTitle('Diagnosed issues');
+      if(r.issues.length)r.issues.forEach((s,i)=>appendSignal(s,i,true));else appendEmpty('No common structural bug found. Test interactions, content accuracy and server behavior manually.');
     }
   }
   function status(msg){root.querySelector('#ps-status').textContent=msg;setTimeout(()=>{if(root.querySelector('#ps-status'))root.querySelector('#ps-status').textContent='Ready'},2500)}

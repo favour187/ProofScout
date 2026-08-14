@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ProofScout Page Assistant",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inspect the current page for opportunity risks, suspicious URL signals, bugs and accessibility problems without leaving it.",
   "permissions": ["storage"],
   "host_permissions": ["http://*/*", "https://*/*"],
@@ -24,13 +24,13 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "proofscout@favour187.github.io",
-      "strict_min_version": "121.0",
+      "strict_min_version": "140.0",
       "data_collection_permissions": {
         "required": ["none"]
       }
     },
     "gecko_android": {
-      "strict_min_version": "121.0"
+      "strict_min_version": "142.0"
     }
   }
 }
