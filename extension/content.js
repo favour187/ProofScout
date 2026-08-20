@@ -201,6 +201,62 @@
     };
   }
 
+  function buildCaution(sec, url, opp){
+    const lines=[];
+    const titles=new Set([...(sec.issues||[]),...(url.signals||[]),...(opp.signals||[])].filter(i=>i.level==='danger'||i.severity==='danger').map(i=>i.title));
+    const groups=new Set((sec.issues||[]).filter(i=>i.severity==='danger').map(i=>i.group));
+    if(location.protocol!=='https:' || titles.has('Connection is not encrypted') || groups.has('Transport'))
+      lines.push('Do not type a password, OTP, card number or bank login. This connection or form is not safe.');
+    if(groups.has('XSS') || titles.has('javascript: address') || titles.has('Markup in the address'))
+      lines.push('This page has XSS-style script behaviour. Anything you enter could be stolen. Leave the fields empty.');
+    if(groups.has('SQL') || titles.has('Database error text on the page'))
+      lines.push('The page is leaking database errors or query-like fields. Do not submit name, ID or payment details.');
+    if(groups.has('CSRF') || titles.has('Password form uses GET'))
+      lines.push('A sign-in form looks unsafe. Do not log in here.');
+    if(groups.has('Secrets'))
+      lines.push('Secrets are already visible in this page. Do not add more credentials.');
+    if((opp.signals||[]).some(s=>s.level==='danger'))
+      lines.push('Do not pay, upload an ID document, or send an OTP until you verify the organizer on their real website.');
+    const unique=[...new Set(lines)].slice(0,5);
+    const block=unique.some(l=>/Do not type|could be stolen|Do not log in|Do not submit|Do not pay/i.test(l));
+    return {
+      level: unique.length?(block?'danger':'warn'):'ok',
+      title: unique.length?'Do not enter sensitive information':'No urgent caution',
+      lines: unique,
+      block
+    };
+  }
+
+  function sensitiveControl(el){
+    if(!el||el.closest?.('#proofscout-root,#proofscout-panel,#proofscout-caution'))return false;
+    const t=(el.type||'').toLowerCase();
+    const hint=((el.autocomplete||'')+' '+(el.name||'')+' '+(el.id||'')+' '+(el.placeholder||'')).toLowerCase();
+    return t==='password'||t==='email'||t==='tel'||t==='file'||/otp|cvv|card|cc-|ssn|bvn|passport|nid|pin|secret|token/i.test(hint);
+  }
+
+  let lastCaution={level:'ok',title:'',lines:[],block:false};
+  function refreshCaution(){
+    try{lastCaution=buildCaution(securityScan(),urlScan(),opportunityScan())}catch{lastCaution={level:'ok',title:'',lines:[],block:false}}
+    const bar=document.getElementById('proofscout-caution');
+    if(!bar)return;
+    if(lastCaution.level==='danger'){
+      bar.classList.add('ps-show');
+      bar.querySelector('strong').textContent=lastCaution.title;
+      bar.querySelector('span').textContent=lastCaution.lines[0]||'Pause before you type.';
+    }else bar.classList.remove('ps-show');
+    return lastCaution;
+  }
+
+  function appendCaution(caution){
+    if(!caution||!caution.lines?.length)return;
+    const box=make('div','ps-caution'+(caution.level==='warn'?' ps-warn':''));
+    box.append(make('strong','',caution.title));
+    const list=document.createElement('ul');
+    caution.lines.forEach(line=>{const li=document.createElement('li');li.textContent=line;list.append(li)});
+    box.append(list);
+    body.append(box);
+  }
+
   function loadPos(){
     try{
       const saved=JSON.parse(localStorage.getItem(POS_KEY)||'null');
@@ -271,8 +327,10 @@
     active=tab;body.replaceChildren();
     root.querySelectorAll('.ps-tab').forEach(b=>b.classList.toggle('ps-active',b.dataset.tab===tab));
     if(tab==='opportunity'){
-      const r=opportunityScan();lastSummary=`ProofScout found a risk score of ${r.score} out of 100. ${r.headline}. ${r.copy}`;
+      const r=opportunityScan();const caution=buildCaution(securityScan(),urlScan(),r);
+      lastSummary=`${caution.lines[0]||''} ProofScout found a risk score of ${r.score} out of 100. ${r.headline}. ${r.copy}`;
       appendHero(r.headline,r.copy,r.score,'risk',r.score>=65?'ps-danger':r.score>=35?'ps-warn':'');
+      appendCaution(caution);
       appendStats([['Page words checked',Math.round(r.textLength/5).toLocaleString()],['Signals explained',r.signals.length]]);
       appendSectionTitle('Page signals');
       if(r.signals.length)r.signals.forEach(s=>appendSignal(s));else appendEmpty('No common opportunity-pressure phrase was detected.');
@@ -280,14 +338,18 @@
       copyButton.append(make('span','','Copy verification questions'),make('span','','→'));body.append(copyButton);
       copyButton.addEventListener('click',()=>navigator.clipboard.writeText('I am independently verifying this page before I continue. Please confirm the official deadline, eligibility, complete rules, all fees, the authorized application domain, and the correct organizer contact through an official channel. For security, I will not send passwords, OTP codes, seed phrases or banking logins.').then(()=>status('Questions copied')).catch(()=>status('Clipboard blocked')));
     }else if(tab==='url'){
-      const r=urlScan();lastSummary=`URL check for ${r.domain}. Risk score ${r.score} out of 100. ${r.headline}. ${r.copy}`;
+      const r=urlScan();const caution=buildCaution(securityScan(),r,opportunityScan());
+      lastSummary=`${caution.lines[0]||''} URL check for ${r.domain}. Risk score ${r.score} out of 100. ${r.headline}.`;
       appendHero(r.headline,r.copy,r.score,'risk',r.score>=50?'ps-danger':r.score?'ps-warn':'');
+      appendCaution(caution);
       body.append(make('div','ps-url',location.href));
       const grid=appendStats([['Protocol',r.protocol.toUpperCase()],['Query keys',r.paramCount]]);
       grid.style.marginTop='8px';appendSectionTitle('URL signals');r.signals.forEach(s=>appendSignal(s));
     }else if(tab==='security'){
-      const r=securityScan();lastSummary=`Security audit found ${r.danger} high-impact indicators and ${r.warnings} hardening gaps. ${r.copy}`;
+      const r=securityScan();const caution=buildCaution(r,urlScan(),opportunityScan());
+      lastSummary=`${caution.lines[0]||r.headline}. Security audit found ${r.danger} high-impact indicators and ${r.warnings} hardening gaps.`;
       appendHero(r.headline,r.copy,r.score,'severity',r.danger?'ps-danger':r.warnings?'ps-warn':'');
+      appendCaution(caution);
       appendStats([['High impact',r.danger],['Hardening gaps',r.warnings],['Offline', 'Yes'],['Groups', r.groups.length]]);
       if(!r.issues.length) appendEmpty('No common XSS, SQL-error, CSRF, secret or hardening fingerprint was visible in this document. That is not a penetration-test result.');
       ['XSS','SQL','CSRF','Secrets','Transport','Hardening'].forEach(group=>{
@@ -316,6 +378,8 @@
   function unmount(){
     clearTimeout(peekTimer);
     root?.remove();
+    document.getElementById('proofscout-caution')?.remove();
+    document.getElementById('proofscout-panel')?.remove();
     root=panel=orb=body=null;
     window.ProofScout.mounted=false;
     try{localStorage.removeItem(PIN_KEY)}catch{}
