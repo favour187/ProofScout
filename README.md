@@ -51,7 +51,16 @@ On supported Android/Chrome devices, open the hosted ProofScout site and tap **I
 
 ## Advanced Chrome page assistant
 
-The `extension` directory contains the optional ProofScout Scout extension for current-page DOM and bug diagnosis. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages. The `extension-firefox` directory contains a Firefox for Android signing package. Mozilla Add-ons signing is free. After Mozilla approves or signs the package, normal users can install it with one tap, review its page-access permission, and use the floating assistant on mobile pages.
+The `extension` directory contains the optional ProofScout Scout extension for current-page DOM and bug diagnosis. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages.
+
+On the hosted site, **Pin Scout to the edge** places a small draggable circle on the screen. Tap it to inspect the current page. The same circle can follow you onto other websites in Firefox through the public add-on:
+
+The Firefox and Firefox for Android companion is listed on Mozilla Add-ons:
+
+- Desktop: https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/
+- Android: https://addons.mozilla.org/android/addon/proofscout-page-assistant/
+
+Normal users tap **Install** on the hosted site, then **Add to Firefox** on the official listing, review the page-access permission, and use the floating assistant on ordinary pages.
 
 ## Run locally
 

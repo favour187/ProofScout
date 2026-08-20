@@ -8,6 +8,7 @@
   <title>ProofScout — Trust before you apply</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="scout.css" />
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>
@@ -33,9 +34,10 @@
           <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
           <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
           <div class="download-row">
-            <button id="assistantInstallBtn" class="offline-download install-primary hero-install install-pending" type="button" disabled data-pending="true"><span class="install-label">Firefox mobile listing pending</span><span aria-hidden="true">…</span></button>
+            <button id="assistantInstallBtn" class="offline-download install-primary hero-install" type="button"><span class="install-label">Pin Scout to the edge</span><span aria-hidden="true">●</span></button>
           </div>
-          <p id="installHint" class="offline-explain">Mozilla approved the code. Public Firefox Android installation requires the AMO “On this site” listing now being submitted.</p>
+          <p id="installHint" class="offline-explain">A small circle appears on the edge of your screen. Tap it to inspect the page in front of you.</p>
+          <p class="keep-everywhere"><a href="demo-target.html">Try it on a suspicious page</a> · <a id="keepEverywhere" href="https://addons.mozilla.org/android/addon/proofscout-page-assistant/">Keep Scout on every website in Firefox</a></p>
           <div class="hero-badges" aria-label="Product assurances">
             <span>● Reads aloud</span><span>● Checks the current page</span><span>● No uploads</span>
           </div>
@@ -53,7 +55,7 @@
 
       <section class="simple-flow" aria-labelledby="simpleTitle">
         <div><p class="step">THE SIMPLE WAY</p><h2 id="simpleTitle">One install. Scout stays with you.</h2></div>
-        <ol><li><span>1</span><strong>Tap Install</strong><small>If Android asks, choose Firefox—not Chrome.</small></li><li><span>2</span><strong>Approve permission</strong><small>The signed add-on opens directly in Firefox.</small></li><li><span>3</span><strong>Tap the floating P</strong><small>Inspect, diagnose or hear any normal page without leaving it.</small></li></ol>
+        <ol><li><span>1</span><strong>Pin Scout</strong><small>A lime circle docks to the edge of your phone.</small></li><li><span>2</span><strong>Drag it</strong><small>Slide it left or right. It stays out of the way until you need it.</small></li><li><span>3</span><strong>Tap the circle</strong><small>Scout reads the page you are looking at — wording, URL and bugs.</small></li></ol>
       </section>
 
       <section class="scout-strip" aria-labelledby="scoutTitle">
@@ -214,11 +216,13 @@
 
   <div id="mobileInstallBar" class="mobile-install-bar" role="region" aria-label="Install ProofScout Assistant">
     <div><strong>ProofScout Assistant</strong><span>Check any page without leaving it</span></div>
-    <button id="mobileInstallLink" type="button" disabled data-pending="true"><span class="mobile-install-label">Pending</span></button>
+    <button id="mobileInstallLink" type="button"><span class="mobile-install-label">Pin</span></button>
   </div>
 
   <footer><span>ProofScout</span><span>Built for safer opportunity access · Data stays on your device</span></footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>window.ProofScoutManual=true;</script>
+  <script src="scout.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

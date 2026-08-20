@@ -1,20 +1,19 @@
-# Create the public Firefox Android listing
+# Public Firefox Android listing
 
-The existing ProofScout developer page is the self-distributed/unlisted channel. Versions 1.0.1 and 1.0.2 on that page are approved and signed, but they will not produce a public Firefox Android installation page.
+The public listing is live. One-tap installation on Firefox Android uses these URLs:
 
-Do not use **Upload a New Version** on that existing page again.
+- Android: https://addons.mozilla.org/android/addon/proofscout-page-assistant/
+- Desktop: https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/
+- Add-on ID: `proofscout-page-assistant@favour187.github.io`
+- Listed version: 1.0.2
 
-## Correct submission
+The website install buttons should point at the Android listing (or open it in Firefox via an Android intent). Do not link a self-hosted unlisted XPI for mobile install.
 
-1. Open: https://addons.mozilla.org/developers/addon/submit/distribution
-2. Start a **new add-on** submission.
-3. Choose **On this site**. Do not choose **On your own**.
-4. Upload `proofscout-firefox-PUBLIC-LISTING-v1.0.2.zip`.
-5. Select Firefox and Firefox for Android.
-6. Complete the public listing using `STORE-LISTING.md`.
-7. Privacy policy: https://favour187.github.io/ProofScout/privacy.html
-8. Submit for public review.
+## If a later version is needed
 
-This package has a new add-on ID—`proofscout-page-assistant@favour187.github.io`—so it will not conflict with the existing unlisted add-on ID.
+1. Open the existing listed add-on: https://addons.mozilla.org/developers/addon/proofscout-page-assistant/versions/submit/
+2. Upload a new zip from `extension-firefox` **without** changing the add-on ID.
+3. Keep Firefox and Firefox for Android compatibility selected.
+4. Submit for public review.
 
-After approval, Mozilla will provide a public link containing `/firefox/addon/`. That public listing URL is what normal Firefox Android users need.
+Do not create another new add-on unless Mozilla asks you to.

@@ -219,19 +219,40 @@ $('#installBtn')?.addEventListener('click',async()=>{
 });
 window.addEventListener('appinstalled',()=>{if($('#installBtn')&&$('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
 
-function configureAssistantInstall(){
-  const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua),isIOS=/iPhone|iPad|iPod/i.test(ua);
+function setPinnedUI(on){
   const main=$('#assistantInstallBtn'),mobile=$('#mobileInstallLink'),mainLabel=$('.install-label'),mobileLabel=$('.mobile-install-label'),hint=$('#installHint');
   if(!main||!mobile)return;
-  if(main.dataset.pending==='true'){if(hint)hint.textContent='Mozilla approved the code. A public AMO listing is required for one-tap installation on Firefox Android.';return}
-  const signed='9fb600ccaa8b44e2babe-1.0.1.xpi';
-  if(isFirefox&&!isIOS){main.href=signed;mobile.href=signed;mainLabel.textContent='Install ProofScout Assistant';mobileLabel.textContent='Install';hint.textContent='Tap Install, review the permission, then approve. Scout will appear on normal websites.';return}
-  if(isAndroid){
-    const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=org.mozilla.firefox');
-    const intent=`intent://favour187.github.io/ProofScout/${signed}#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
-    main.href=intent;mobile.href=intent;mainLabel.textContent='Install with Firefox';mobileLabel.textContent='Install';hint.textContent='If Android asks which app to use, choose Firefox. It will open the signed add-on permission screen immediately.';return
+  if(on){
+    mainLabel.textContent='Scout is on the edge';
+    mobileLabel.textContent='Pinned';
+    if(hint)hint.textContent='Drag the circle to either edge. Tap it to scan this page. Hide it anytime from the panel.';
+    $('#mobileInstallBar')?.classList.add('ps-hidden');
+  }else{
+    mainLabel.textContent='Pin Scout to the edge';
+    mobileLabel.textContent='Pin';
+    if(hint)hint.textContent='A small circle appears on the edge of your screen. Tap it to inspect the page in front of you.';
+    $('#mobileInstallBar')?.classList.remove('ps-hidden');
   }
-  main.href='https://www.mozilla.org/firefox/new/';mobile.href='https://www.mozilla.org/firefox/new/';mainLabel.textContent='Get Firefox to Install';mobileLabel.textContent='Get Firefox';hint.textContent='Install Firefox free, then return to this page and tap Install ProofScout Assistant.';
+}
+
+function pinScout(e){
+  e?.preventDefault();
+  if(!window.ProofScout){toast('Scout failed to load');return}
+  window.ProofScout.onUnpin=()=>setPinnedUI(false);
+  window.ProofScout.mount({persist:true,canUnpin:true});
+  setPinnedUI(true);
+  if(e) toast('Scout is on the edge — tap the circle');
+}
+
+function configureAssistantInstall(){
+  const AMO_ANDROID='https://addons.mozilla.org/android/addon/proofscout-page-assistant/';
+  const AMO_FIREFOX='https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/';
+  const keep=$('#keepEverywhere');
+  const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua);
+  if(keep) keep.href=isAndroid?AMO_ANDROID:AMO_FIREFOX;
+  $('#assistantInstallBtn')?.addEventListener('click',pinScout);
+  $('#mobileInstallLink')?.addEventListener('click',pinScout);
+  if(window.ProofScout?.isPinned()) pinScout();
 }
 configureAssistantInstall();
 

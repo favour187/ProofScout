@@ -1,8 +1,26 @@
 (()=>{
-  if(window.__proofScoutLoaded)return; window.__proofScoutLoaded=true;
-  const PS_ID='proofscout-root';
-  const safeText=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-  const pageText=()=>document.body?.innerText?.replace(/\s+/g,' ').slice(0,100000)||'';
+  if(window.ProofScout?.mounted)return;
+
+  const POS_KEY='proofscout-orb-pos';
+  const PIN_KEY='proofscout-pinned';
+  const SIZE=56;
+  const PEEK=22;
+
+  const make=(tag,className,text)=>{
+    const node=document.createElement(tag);
+    if(className)node.className=className;
+    if(text!==undefined)node.textContent=String(text);
+    return node;
+  };
+
+  function pageText(){
+    const root=document.getElementById('proofscout-root');
+    const prev=root?.style.display;
+    if(root)root.style.display='none';
+    const t=document.body?.innerText?.replace(/\s+/g,' ').slice(0,100000)||'';
+    if(root)root.style.display=prev||'';
+    return t;
+  }
 
   function opportunityScan(){
     const t=pageText(); let score=10; const signals=[];
@@ -41,7 +59,10 @@
     const issues=[]; const add=(nodes,severity,title,copy)=>{if(nodes.length)issues.push({nodes,severity,title,copy,count:nodes.length})};
     const broken=[...document.images].filter(i=>i.complete&&i.naturalWidth===0);
     add(broken,'danger','Broken images','Images failed to load and may hide important instructions or indicate a deployment problem.');
-    const mixed=[...document.querySelectorAll('[src],[href]')].filter(e=>location.protocol==='https:'&&/^(src|href)$/i.test(e.hasAttribute('src')?'src':'href')&&/^http:\/\//i.test(e.getAttribute(e.hasAttribute('src')?'src':'href')||''));
+    const mixed=[...document.querySelectorAll('[src],[href]')].filter(e=>{
+      const attr=e.hasAttribute('src')?'src':'href';
+      return location.protocol==='https:'&&/^http:\/\//i.test(e.getAttribute(attr)||'');
+    });
     add(mixed,'danger','Mixed or insecure resources','HTTPS pages should not load active resources over unencrypted HTTP.');
     const insecureForms=[...document.forms].filter(f=>{try{return new URL(f.action||location.href,location.href).protocol==='http:'}catch{return false}});
     add(insecureForms,'danger','Insecure form destination','A form appears to submit information over HTTP. Do not enter sensitive data.');
@@ -50,7 +71,7 @@
     const emptyActions=[...document.querySelectorAll('button,a[href]')].filter(e=>!(e.innerText||e.getAttribute('aria-label')||e.title||'').trim()&&!e.querySelector('img[alt]'));
     add(emptyActions,'warn','Unnamed buttons or links','Interactive controls without accessible names are difficult for screen-reader and voice users.');
     const ids=[...document.querySelectorAll('[id]')].map(e=>e.id).filter(Boolean);const dup=new Set(ids.filter((id,i)=>ids.indexOf(id)!==i));
-    add([...dup].flatMap(id=>[...document.querySelectorAll(`#${CSS.escape(id)}`)]),'warn','Duplicate element IDs','Repeated IDs can break labels, scripts, navigation and automated testing.');
+    add([...dup].flatMap(id=>[...document.querySelectorAll('#'+CSS.escape(id))]),'warn','Duplicate element IDs','Repeated IDs can break labels, scripts, navigation and automated testing.');
     const blankTargets=[...document.querySelectorAll('a[target="_blank"]:not([rel~="noopener"])')];
     add(blankTargets,'warn','New-tab links lack isolation','Links opening new tabs should use rel="noopener" to reduce opener attacks.');
     const heading=[...document.querySelectorAll('h1,h2,h3,h4,h5,h6')];const gaps=heading.filter((h,i)=>i&&Number(h.tagName[1])>Number(heading[i-1].tagName[1])+1);
@@ -65,19 +86,54 @@
     return {score,issues,danger,warnings,headline:danger?'Security-impacting page problems':warnings?'Quality and accessibility bugs found':'No common DOM bug detected',copy:danger?'Avoid sensitive actions until the security-impacting issues are fixed.':warnings?'The page works, but these issues can exclude users or break interactions.':'Automated checks cannot find every bug; manual testing is still necessary.'};
   }
 
-  const make=(tag,className,text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=String(text);return node};
-  const root=make('div');root.id=PS_ID;
-  const panel=make('div');panel.id='proofscout-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','ProofScout page assistant');
-  const head=make('div','ps-head'),mark=make('span','ps-mark','P'),title=make('div','ps-title');title.append(make('strong','','Scout'),make('span','','Private page intelligence'));
-  const iconButton=(id,label,titleText)=>{const b=make('button','ps-icon',label);b.id=id;b.type='button';b.title=titleText;return b};
-  head.append(mark,title,iconButton('ps-speak','◖','Read summary aloud'),iconButton('ps-mic','●','Voice command'),iconButton('ps-close','×','Close'));
-  const tabs=make('div','ps-tabs');[['opportunity','Opportunity'],['url','URL'],['bugs','Bug doctor']].forEach(([id,label],i)=>{const b=make('button',`ps-tab${i===0?' ps-active':''}`,label);b.type='button';b.dataset.tab=id;tabs.append(b)});
-  const body=make('div','ps-body');body.id='ps-body';
-  const footer=make('div','ps-footer'),statusNode=make('span','ps-listen','Ready');statusNode.id='ps-status';footer.append(make('span','','On-device analysis · no upload'),statusNode);
-  panel.append(head,tabs,body,footer);
-  const orb=make('button','','P');orb.id='proofscout-orb';orb.type='button';orb.setAttribute('aria-label','Open ProofScout page assistant');orb.title='Ask Scout about this page';
-  root.append(panel,orb);document.documentElement.appendChild(root);
-  let active='opportunity', lastSummary='';
+  function loadPos(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(POS_KEY)||'null');
+      if(saved&&(saved.edge==='left'||saved.edge==='right')&&typeof saved.y==='number')return saved;
+    }catch{}
+    return {edge:'right', y:0.38};
+  }
+
+  function savePos(pos){
+    try{localStorage.setItem(POS_KEY,JSON.stringify(pos))}catch{}
+  }
+
+  let root, panel, orb, body, active='opportunity', lastSummary='', peekTimer=null, pos=loadPos();
+  let dragging=false, moved=false, startX=0, startY=0, origX=0, origY=0;
+
+  function applyPos(){
+    if(!root)return;
+    const maxY=Math.max(8, window.innerHeight-SIZE-8);
+    const y=Math.min(maxY, Math.max(8, pos.y*window.innerHeight));
+    root.style.top=y+'px';
+    root.style.bottom='auto';
+    if(pos.edge==='left'){
+      root.style.left='0px';
+      root.style.right='auto';
+      root.classList.add('ps-left');
+      root.classList.remove('ps-right');
+    }else{
+      root.style.left='auto';
+      root.style.right='0px';
+      root.classList.add('ps-right');
+      root.classList.remove('ps-left');
+    }
+  }
+
+  function schedulePeek(){
+    clearTimeout(peekTimer);
+    root?.classList.remove('ps-peek');
+    if(panel?.classList.contains('ps-open')||dragging)return;
+    peekTimer=setTimeout(()=>root?.classList.add('ps-peek'),2200);
+  }
+
+  function status(msg){
+    const node=root?.querySelector('#ps-status');
+    if(!node)return;
+    node.textContent=msg;
+    setTimeout(()=>{if(root?.querySelector('#ps-status'))root.querySelector('#ps-status').textContent='Ready'},2500);
+  }
+
   function appendHero(headline,copy,score,suffix,level){
     const hero=make('div',`ps-hero ${level||''}`),scoreRow=make('div','ps-score');
     scoreRow.append(make('strong','',headline),make('span','',`${score}/100 ${suffix}`));
@@ -85,43 +141,179 @@
   }
   function appendStats(items){
     const grid=make('div','ps-stat-grid');
-    items.forEach(([label,value])=>{const stat=make('div','ps-stat');stat.append(make('span','',label),make('strong','',value));grid.append(stat)});
+    items.forEach(([label,value])=>{const stat=make('div','ps-stat');stat.append(make('span','',label),make('strong','',String(value)));grid.append(stat)});
     body.append(grid);return grid;
   }
-  function appendSignal(s,index,enableHighlight=false){
-    const row=make('div',`ps-signal ${s.level==='danger'?'ps-danger':s.level==='warn'?'ps-warn':''}`),dot=make('span','ps-dot',s.level==='safe'?'✓':'!'),details=make('div');
+  function appendSignal(s,enableHighlight=false){
+    const row=make('div',`ps-signal ${s.level==='danger'?'ps-danger':s.level==='warn'?'ps-warn':''}`),dot=make('span','ps-dot',s.level==='safe'?'✓':'!');
+    const details=make('div');
     details.append(make('strong','',`${s.title}${s.count?` · ${s.count}`:''}`),make('p','',s.copy));
-    if(enableHighlight&&s.nodes?.length){const button=make('button','ps-secondary ps-highlight','Show on page');button.type='button';button.addEventListener('click',()=>{document.querySelectorAll('.proofscout-highlight').forEach(e=>e.classList.remove('proofscout-highlight'));s.nodes.slice(0,15).forEach(e=>e?.classList?.add('proofscout-highlight'));s.nodes[0]?.scrollIntoView?.({behavior:'smooth',block:'center'});status(`${s.count} element${s.count===1?'':'s'} highlighted`)});details.append(button)}
+    if(enableHighlight&&s.nodes?.length){
+      const button=make('button','ps-secondary','Show on page');
+      button.type='button';
+      button.addEventListener('click',()=>{
+        document.querySelectorAll('.proofscout-highlight').forEach(e=>e.classList.remove('proofscout-highlight'));
+        s.nodes.slice(0,15).forEach(e=>e?.classList?.add('proofscout-highlight'));
+        s.nodes[0]?.scrollIntoView?.({behavior:'smooth',block:'center'});
+        status(`${s.count} element${s.count===1?'':'s'} highlighted`);
+      });
+      details.append(button);
+    }
     row.append(dot,details);body.append(row);
   }
   function appendSectionTitle(text){body.append(make('div','ps-section-title',text))}
   function appendEmpty(text){body.append(make('div','ps-empty',text))}
+
   function render(tab){
-    active=tab;body.replaceChildren();root.querySelectorAll('.ps-tab').forEach(b=>b.classList.toggle('ps-active',b.dataset.tab===tab));
+    active=tab;body.replaceChildren();
+    root.querySelectorAll('.ps-tab').forEach(b=>b.classList.toggle('ps-active',b.dataset.tab===tab));
     if(tab==='opportunity'){
       const r=opportunityScan();lastSummary=`ProofScout found a risk score of ${r.score} out of 100. ${r.headline}. ${r.copy}`;
       appendHero(r.headline,r.copy,r.score,'risk',r.score>=65?'ps-danger':r.score>=35?'ps-warn':'');
-      appendStats([['Page words checked',Math.round(r.textLength/5).toLocaleString()],['Signals explained',r.signals.length]]);appendSectionTitle('Page signals');
-      if(r.signals.length)r.signals.forEach((s,i)=>appendSignal(s,i));else appendEmpty('No common opportunity-pressure phrase was detected. Verify the organizer independently.');
-      const copyButton=make('button','ps-action');copyButton.id='ps-copy';copyButton.type='button';copyButton.append(make('span','','Copy verification questions'),make('span','','→'));body.append(copyButton);
+      appendStats([['Page words checked',Math.round(r.textLength/5).toLocaleString()],['Signals explained',r.signals.length]]);
+      appendSectionTitle('Page signals');
+      if(r.signals.length)r.signals.forEach(s=>appendSignal(s));else appendEmpty('No common opportunity-pressure phrase was detected. Verify the organizer independently.');
+      const copyButton=make('button','ps-action');copyButton.type='button';
+      copyButton.append(make('span','','Copy verification questions'),make('span','','→'));body.append(copyButton);
       copyButton.addEventListener('click',()=>navigator.clipboard.writeText('I am independently verifying this page before I continue. Please confirm the official deadline, eligibility, complete rules, all fees, the authorized application domain, and the correct organizer contact through an official channel. For security, I will not send passwords, OTP codes, seed phrases or banking logins.').then(()=>status('Questions copied')).catch(()=>status('Clipboard blocked')));
     }else if(tab==='url'){
       const r=urlScan();lastSummary=`URL check for ${r.domain}. Risk score ${r.score} out of 100. ${r.headline}. ${r.copy}`;
-      appendHero(r.headline,r.copy,r.score,'risk',r.score>=50?'ps-danger':r.score?'ps-warn':'');body.append(make('div','ps-url',location.href));
-      const grid=appendStats([['Protocol',r.protocol.toUpperCase()],['Domain labels',r.domain.split('.').length]]);grid.style.marginTop='8px';appendSectionTitle('URL signals');r.signals.forEach((s,i)=>appendSignal(s,i));
+      appendHero(r.headline,r.copy,r.score,'risk',r.score>=50?'ps-danger':r.score?'ps-warn':'');
+      body.append(make('div','ps-url',location.href));
+      const grid=appendStats([['Protocol',r.protocol.toUpperCase()],['Domain labels',r.domain.split('.').length]]);
+      grid.style.marginTop='8px';appendSectionTitle('URL signals');r.signals.forEach(s=>appendSignal(s));
     }else{
-      const r=bugScan();window.__proofScoutIssues=r.issues;lastSummary=`Bug doctor found ${r.danger} security-impacting problems and ${r.warnings} quality or accessibility problems. ${r.copy}`;
-      appendHero(r.headline,r.copy,r.score,'severity',r.danger?'ps-danger':r.warnings?'ps-warn':'');appendStats([['Security-impacting',r.danger],['Quality / access',r.warnings]]);appendSectionTitle('Diagnosed issues');
-      if(r.issues.length)r.issues.forEach((s,i)=>appendSignal(s,i,true));else appendEmpty('No common structural bug found. Test interactions, content accuracy and server behavior manually.');
+      const r=bugScan();lastSummary=`Bug doctor found ${r.danger} security-impacting problems and ${r.warnings} quality or accessibility problems. ${r.copy}`;
+      appendHero(r.headline,r.copy,r.score,'severity',r.danger?'ps-danger':r.warnings?'ps-warn':'');
+      appendStats([['Security-impacting',r.danger],['Quality / access',r.warnings]]);appendSectionTitle('Diagnosed issues');
+      if(r.issues.length)r.issues.forEach(s=>appendSignal(s,true));else appendEmpty('No common structural bug found. Test interactions, content accuracy and server behavior manually.');
     }
+    orb.classList.toggle('ps-alert', (tab==='opportunity'?opportunityScan():tab==='url'?urlScan():bugScan()).score>=65);
   }
-  function status(msg){root.querySelector('#ps-status').textContent=msg;setTimeout(()=>{if(root.querySelector('#ps-status'))root.querySelector('#ps-status').textContent='Ready'},2500)}
-  orb.addEventListener('click',()=>{panel.classList.toggle('ps-open');if(panel.classList.contains('ps-open'))render(active)});
-  root.querySelector('#ps-close').addEventListener('click',()=>panel.classList.remove('ps-open'));
-  root.querySelectorAll('.ps-tab').forEach(b=>b.addEventListener('click',()=>render(b.dataset.tab)));
-  root.querySelector('#ps-speak').addEventListener('click',()=>{speechSynthesis.cancel();const utter=new SpeechSynthesisUtterance(lastSummary||'Open a scan first.');utter.rate=.96;speechSynthesis.speak(utter);status('Reading summary')});
-  root.querySelector('#ps-mic').addEventListener('click',()=>{
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){status('Voice commands unavailable');return}const rec=new SR();rec.lang='en-US';rec.interimResults=false;status('Listening…');rec.onresult=e=>{const q=e.results[0][0].transcript.toLowerCase();if(/bug|diagnose|site health/.test(q))render('bugs');else if(/url|link|domain/.test(q))render('url');else if(/close|hide/.test(q))panel.classList.remove('ps-open');else render('opportunity');status(`Heard: ${q}`)};rec.onerror=()=>status('Could not hear command');rec.start();
-  });
-  const quick=opportunityScan();if(quick.score>=65)orb.classList.add('ps-alert');
+
+  function togglePanel(){
+    panel.classList.toggle('ps-open');
+    if(panel.classList.contains('ps-open')){
+      root.classList.remove('ps-peek');
+      render(active);
+    }else schedulePeek();
+  }
+
+  function unmount(){
+    clearTimeout(peekTimer);
+    root?.remove();
+    root=panel=orb=body=null;
+    window.ProofScout.mounted=false;
+    try{localStorage.removeItem(PIN_KEY)}catch{}
+    document.getElementById('mobileInstallBar')?.classList.remove('ps-hidden');
+  }
+
+  function bindDrag(){
+    orb.addEventListener('pointerdown',e=>{
+      if(e.button&&e.button!==0)return;
+      dragging=true; moved=false;
+      startX=e.clientX; startY=e.clientY;
+      const r=root.getBoundingClientRect();
+      origX=r.left; origY=r.top;
+      root.classList.add('ps-dragging');
+      root.classList.remove('ps-peek');
+      orb.setPointerCapture(e.pointerId);
+    });
+    orb.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+      const dx=e.clientX-startX, dy=e.clientY-startY;
+      if(!moved && Math.hypot(dx,dy)<8)return;
+      moved=true;
+      panel.classList.remove('ps-open');
+      let x=origX+dx, y=origY+dy;
+      x=Math.min(window.innerWidth-SIZE, Math.max(0,x));
+      y=Math.min(window.innerHeight-SIZE, Math.max(8,y));
+      root.style.left=x+'px';
+      root.style.right='auto';
+      root.style.top=y+'px';
+    });
+    const end=e=>{
+      if(!dragging)return;
+      dragging=false;
+      root.classList.remove('ps-dragging');
+      try{orb.releasePointerCapture(e.pointerId)}catch{}
+      if(!moved){togglePanel();return}
+      const r=root.getBoundingClientRect();
+      pos.edge=(r.left+r.width/2)<window.innerWidth/2?'left':'right';
+      pos.y=r.top/window.innerHeight;
+      savePos(pos);
+      applyPos();
+      schedulePeek();
+    };
+    orb.addEventListener('pointerup',end);
+    orb.addEventListener('pointercancel',end);
+  }
+
+  function mount(opts={}){
+    if(document.getElementById('proofscout-root')){
+      window.ProofScout.mounted=true;
+      return window.ProofScout;
+    }
+    root=make('div');root.id='proofscout-root';
+    panel=make('div');panel.id='proofscout-panel';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','ProofScout page assistant');
+    const head=make('div','ps-head'),mark=make('span','ps-mark','P'),title=make('div','ps-title');
+    title.append(make('strong','','Scout'),make('span','','Checks the page in front of you'));
+    const iconButton=(id,label,titleText)=>{const b=make('button','ps-icon',label);b.id=id;b.type='button';b.title=titleText;return b};
+    head.append(mark,title,iconButton('ps-speak','◖','Read summary aloud'),iconButton('ps-mic','●','Voice command'),iconButton('ps-close','×','Close'));
+    const tabs=make('div','ps-tabs');
+    [['opportunity','Opportunity'],['url','URL'],['bugs','Bug doctor']].forEach(([id,label],i)=>{
+      const b=make('button',`ps-tab${i===0?' ps-active':''}`,label);b.type='button';b.dataset.tab=id;tabs.append(b);
+    });
+    body=make('div','ps-body');body.id='ps-body';
+    const footer=make('div','ps-footer'),statusNode=make('span','ps-listen','Ready');statusNode.id='ps-status';
+    const unpin=make('button','ps-unpin','Hide circle');unpin.type='button';
+    footer.append(make('span','','On-device · no upload'), statusNode);
+    if(opts.canUnpin!==false)footer.append(unpin);
+    panel.append(head,tabs,body,footer);
+    orb=make('button','','P');orb.id='proofscout-orb';orb.type='button';
+    orb.setAttribute('aria-label','Open ProofScout');orb.title='Drag to the edge. Tap to scan this page.';
+    root.append(panel,orb);
+    document.documentElement.appendChild(root);
+    applyPos();
+    bindDrag();
+    unpin.addEventListener('click',()=>{unmount();window.ProofScout.onUnpin?.()});
+    root.querySelector('#ps-close').addEventListener('click',()=>{panel.classList.remove('ps-open');schedulePeek()});
+    root.querySelectorAll('.ps-tab').forEach(b=>b.addEventListener('click',()=>render(b.dataset.tab)));
+    root.querySelector('#ps-speak').addEventListener('click',()=>{
+      speechSynthesis.cancel();
+      const utter=new SpeechSynthesisUtterance(lastSummary||'Open a scan first.');
+      utter.rate=.96;speechSynthesis.speak(utter);status('Reading summary');
+    });
+    root.querySelector('#ps-mic').addEventListener('click',()=>{
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(!SR){status('Voice commands unavailable');return}
+      const rec=new SR();rec.lang='en-US';rec.interimResults=false;status('Listening…');
+      rec.onresult=e=>{
+        const q=e.results[0][0].transcript.toLowerCase();
+        if(/bug|diagnose|site health/.test(q))render('bugs');
+        else if(/url|link|domain/.test(q))render('url');
+        else if(/close|hide/.test(q))panel.classList.remove('ps-open');
+        else render('opportunity');
+        status('Heard: '+q);
+      };
+      rec.onerror=()=>status('Could not hear command');rec.start();
+    });
+    window.addEventListener('resize',()=>{applyPos()});
+    try{
+      const quick=opportunityScan();
+      if(quick.score>=65)orb.classList.add('ps-alert');
+    }catch{}
+    if(opts.persist!==false){try{localStorage.setItem(PIN_KEY,'1')}catch{}}
+    document.getElementById('mobileInstallBar')?.classList.add('ps-hidden');
+    schedulePeek();
+    window.ProofScout.mounted=true;
+    return window.ProofScout;
+  }
+
+  window.ProofScout={
+    mount, unmount, mounted:false,
+    isPinned(){try{return localStorage.getItem(PIN_KEY)==='1'}catch{return false}}
+  };
+
+  if(!window.ProofScoutManual) mount({canUnpin:false, persist:false});
 })();

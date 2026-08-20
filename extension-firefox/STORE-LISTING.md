@@ -1,5 +1,7 @@
 # Mozilla Add-ons listing material
 
+Public listing: https://addons.mozilla.org/android/addon/proofscout-page-assistant/
+
 ## Name
 ProofScout Page Assistant
 
