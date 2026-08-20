@@ -5,15 +5,13 @@ The public listing is live. One-tap installation on Firefox Android uses these U
 - Android: https://addons.mozilla.org/android/addon/proofscout-page-assistant/
 - Desktop: https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/
 - Add-on ID: `proofscout-page-assistant@favour187.github.io`
-- Listed version: 1.0.2 on AMO until you upload `proofscout-firefox-PUBLIC-LISTING-v1.0.3.zip` as a new version of the same add-on.
+- Upload version **3.0.0** now: `proofscout_page_assistant-3.0.0.xpi` (repo root) or `proofscout-firefox-PUBLIC-LISTING-v3.0.0.zip`
 
-The website install buttons should point at the Android listing (or open it in Firefox via an Android intent). Do not link a self-hosted unlisted XPI for mobile install.
+## Upload v3
 
-## If a later version is needed
-
-1. Open the existing listed add-on: https://addons.mozilla.org/developers/addon/proofscout-page-assistant/versions/submit/
-2. Upload a new zip from `extension-firefox` **without** changing the add-on ID.
-3. Keep Firefox and Firefox for Android compatibility selected.
+1. Open: https://addons.mozilla.org/developers/addon/proofscout-page-assistant/versions/submit/
+2. Upload the v3.0.0 xpi/zip. Do **not** create a new add-on.
+3. Keep Firefox and Firefox for Android selected.
 4. Submit for public review.
 
-Do not create another new add-on unless Mozilla asks you to.
+Do not change the add-on ID.
