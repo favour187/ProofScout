@@ -35,6 +35,10 @@ ProofScout runs entirely in the browser. Pasted messages and saved cases never l
 - On-page bug doctor for broken images, insecure forms/resources, duplicate IDs and accessibility defects
 - Voice commands and spoken findings through browser speech features
 - Click-to-highlight affected page elements
+- Offline XSS, SQL-error, CSRF, secret, transport and hardening audit
+- “Do not enter sensitive information” banners, field marks and form blocking
+- Live re-scan when the page DOM changes
+- Local audit export and short history
 - No account, analytics, paid API or backend
 
 ## Technical approach
@@ -53,7 +57,7 @@ On supported Android/Chrome devices, open the hosted ProofScout site and tap **I
 
 The `extension` directory contains the optional ProofScout Scout extension for current-page DOM and bug diagnosis. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages.
 
-On the hosted site, **Pin Scout to the edge** places a small draggable circle on the screen. Tap it to inspect the current page. The same circle can follow you onto other websites in Firefox through the public add-on:
+On the hosted site, **Pin on this page only** places a small draggable circle on ProofScout itself. To take Scout onto other websites, add the public Firefox add-on:
 
 The Firefox and Firefox for Android companion is listed on Mozilla Add-ons:
 

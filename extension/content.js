@@ -189,6 +189,25 @@
     add(qs('a[href^="file:"],a[href^="\\\\"]'),'danger','Local file link','file: or UNC links can probe the user’s machine.','Hardening');
     if(!document.querySelector('meta[name="referrer"],meta[name="referrer-policy"]'))
       add([document.head||document.documentElement],'warn','No referrer policy in the document','Without a referrer policy, tokens in URLs leak to third-party links.','Hardening');
+    add(qs('[oncopy],[oncut],[onpaste]'),'danger','Copy or paste hijack handlers','The page intercepts copy, cut or paste. That can swap a wallet address or steal what you copy. Do not copy secrets here.','XSS');
+    add(qs('a[download],a[href$=".exe"],a[href$=".apk"],a[href$=".msi"],a[href$=".scr"]'),'warn','Executable or forced download','Treat unexpected installers as malware until the real publisher confirms them.','Hardening');
+    add(qs('a[href]').filter(a=>{try{return new URL(a.href,location.href).hostname.includes('xn--')}catch{return false}}),'danger','Punycode link on the page','An internationalized link can look like a known brand. Do not log in through it.','XSS');
+    add(qs('a[href]').filter(a=>/bit\.ly|tinyurl|t\.co|goo\.gl|is\.gd|cutt\.ly/i.test(a.getAttribute('href')||'')),'warn','Shortened outbound links','Short links hide the real destination. Open them only from an official site.','Hardening');
+    if(/coinhive|cryptoloot|minero|webminer|cryptonight/i.test(html+code))
+      add([document.documentElement],'danger','Cryptominer fingerprint','Miner script names appeared in the page. Close the tab if you did not expect mining.','Hardening');
+    add(qs('input[type="password"][autofocus]'),'warn','Password field takes focus immediately','Autofocus on a credential field is common in phishing kits. Confirm the real domain first.','CSRF');
+    add(qs('input[autocomplete="cc-number"],input[autocomplete="cc-csc"],input[name*="card"],input[id*="cvv"]'),'danger','Payment-card fields present','Do not enter card numbers unless you independently opened the real payment provider.','Secrets');
+    add(qs('input[type="password"]').filter(e=>{const r=e.getBoundingClientRect();const s=getComputedStyle(e);return e.tabIndex<0||s.opacity==='0'||s.visibility==='hidden'||r.width<2||r.height<2}),'danger','Hidden password field','A password control is effectively invisible. That is a common harvesting trick. Do not type.','Secrets');
+    const brands=/paypal|google|microsoft|apple|facebook|instagram|whatsapp|gtbank|firstbank|opay|palmpay|kuda/i;
+    add(qs('a[href]').filter(a=>{
+      try{
+        const host=new URL(a.href,location.href).hostname;
+        const text=a.textContent||'';
+        return brands.test(text)&&!brands.test(host)&&host!==location.hostname;
+      }catch{return false}
+    }),'danger','Brand name does not match the link','Visible text names a known brand, but the URL goes elsewhere. Do not sign in.','XSS');
+    if(/navigator\.(geolocation|mediaDevices)|PaymentRequest/i.test(code))
+      add([document.documentElement],'warn','Powerful device APIs in script','The page mentions location, camera or payment APIs. Deny the prompt unless you trust this exact site.','Hardening');
 
     const danger=issues.filter(i=>i.severity==='danger').reduce((n,i)=>n+(i.count||1),0);
     const warnings=issues.filter(i=>i.severity==='warn').reduce((n,i)=>n+(i.count||1),0);
@@ -238,12 +257,13 @@
   function refreshCaution(){
     try{lastCaution=buildCaution(securityScan(),urlScan(),opportunityScan())}catch{lastCaution={level:'ok',title:'',lines:[],block:false}}
     const bar=document.getElementById('proofscout-caution');
-    if(!bar)return;
+    if(!bar){markSensitiveFields(lastCaution);return lastCaution;}
     if(lastCaution.level==='danger'){
       bar.classList.add('ps-show');
       bar.querySelector('strong').textContent=lastCaution.title;
       bar.querySelector('span').textContent=lastCaution.lines[0]||'Pause before you type.';
     }else bar.classList.remove('ps-show');
+    markSensitiveFields(lastCaution);
     return lastCaution;
   }
 
@@ -255,6 +275,53 @@
     caution.lines.forEach(line=>{const li=document.createElement('li');li.textContent=line;list.append(li)});
     box.append(list);
     body.append(box);
+  }
+
+  function markSensitiveFields(caution){
+    qs('.ps-field-caution').forEach(n=>n.remove());
+    qs('.proofscout-sensitive-warn').forEach(n=>n.classList.remove('proofscout-sensitive-warn'));
+    if(!caution||caution.level==='ok')return;
+    qs('input,textarea,select').filter(sensitiveControl).slice(0,16).forEach(el=>{
+      el.classList.add('proofscout-sensitive-warn');
+      el.setAttribute('title','Scout: do not enter a password, code, card or ID here');
+      const tag=make('div','ps-field-caution','Do not enter sensitive information');
+      el.insertAdjacentElement('afterend',tag);
+    });
+  }
+
+  function saveHistory(report){
+    try{
+      const log=JSON.parse(localStorage.getItem('proofscout-audit-log')||'[]');
+      log.unshift({at:report.generatedAt,host:location.hostname,score:report.security.score,caution:report.caution.title});
+      localStorage.setItem('proofscout-audit-log',JSON.stringify(log.slice(0,12)));
+    }catch{}
+  }
+
+  function exportAudit(){
+    const sec=securityScan(), url=urlScan(), opp=opportunityScan(), caution=buildCaution(sec,url,opp);
+    const report={
+      product:'ProofScout',kind:'page-audit',offline:true,generatedAt:new Date().toISOString(),
+      notice:'Screening aid only. Not a penetration test or a guarantee of safety.',
+      page:{url:location.href,title:document.title,https:location.protocol==='https:'},
+      caution,opportunity:{score:opp.score,headline:opp.headline},
+      url:{score:url.score,headline:url.headline,signals:url.signals.map(s=>({title:s.title,level:s.level}))},
+      security:{score:sec.score,danger:sec.danger,warnings:sec.warnings,findings:sec.issues.map(i=>({group:i.group,level:i.severity,title:i.title,copy:i.copy,count:i.count}))}
+    };
+    saveHistory(report);
+    const blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`proofscout-audit-${Date.now()}.json`;a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    status('Audit saved on this device');
+  }
+
+  function appendHistory(){
+    let log=[];
+    try{log=JSON.parse(localStorage.getItem('proofscout-audit-log')||'[]')}catch{}
+    if(!log.length)return;
+    appendSectionTitle('Recent local audits');
+    log.slice(0,5).forEach(item=>{
+      appendSignal({level:'warn',title:item.host||'Page',copy:(item.caution||'')+' · '+(item.at||'')});
+    });
   }
 
   function loadPos(){
@@ -358,6 +425,15 @@
         appendSectionTitle(group==='SQL'?'SQL / data layer':group==='XSS'?'Cross-site scripting':group);
         items.forEach(s=>appendSignal(s,true));
       });
+      const exportBtn=make('button','ps-action');exportBtn.type='button';
+      exportBtn.append(make('span','','Export local audit'),make('span','','↓'));
+      exportBtn.addEventListener('click',exportAudit);
+      body.append(exportBtn);
+      const copyBtn=make('button','ps-secondary');copyBtn.type='button';copyBtn.textContent='Copy caution to clipboard';
+      copyBtn.style.marginTop='8px';
+      copyBtn.addEventListener('click',()=>navigator.clipboard.writeText([caution.title,...caution.lines,location.href].join('\n')).then(()=>status('Caution copied')).catch(()=>status('Clipboard blocked')));
+      body.append(copyBtn);
+      appendHistory();
     }else{
       const r=qualityScan();lastSummary=`Bug doctor found ${r.danger} security-impacting quality problems and ${r.warnings} accessibility issues. ${r.copy}`;
       appendHero(r.headline,r.copy,r.score,'severity',r.danger?'ps-danger':r.warnings?'ps-warn':'');
@@ -475,7 +551,42 @@
       rec.onerror=()=>status('Could not hear command');rec.start();
     });
     window.addEventListener('resize',()=>applyPos());
-    try{if(securityScan().score>=65)orb.classList.add('ps-alert')}catch{}
+    const banner=make('div');banner.id='proofscout-caution';banner.setAttribute('role','alert');
+    banner.append(make('strong','','Do not enter sensitive information'),make('span','','Scout found a risk on this page.'));
+    document.documentElement.appendChild(banner);
+    document.addEventListener('focusin',e=>{
+      if(!sensitiveControl(e.target))return;
+      const caution=refreshCaution();
+      if(caution.level==='ok')return;
+      banner.classList.add('ps-show');
+      banner.querySelector('strong').textContent='Stop — do not type here';
+      banner.querySelector('span').textContent=caution.lines[0]||'This field can expose a password, code or personal document.';
+      panel.classList.add('ps-open');root.classList.remove('ps-peek');render('security');
+      status('Caution: leave this field empty');
+    },true);
+    document.addEventListener('submit',e=>{
+      const form=e.target;
+      if(!form?.querySelector)return;
+      if(!form.querySelector('input[type="password"],input[type="file"],input[autocomplete*="cc-"]'))return;
+      const caution=refreshCaution();
+      if(!caution.block)return;
+      e.preventDefault();e.stopPropagation();
+      banner.classList.add('ps-show');
+      banner.querySelector('strong').textContent='Scout stopped this form';
+      banner.querySelector('span').textContent=caution.lines[0]||'Do not send a password, ID file or payment detail from this page.';
+      panel.classList.add('ps-open');render('security');status('Form blocked to protect you');
+    },true);
+    let scanTimer=null;
+    new MutationObserver(muts=>{
+      if(muts.every(m=>m.target.closest?.('#proofscout-root,#proofscout-panel,#proofscout-caution,.ps-field-caution')))return;
+      clearTimeout(scanTimer);
+      scanTimer=setTimeout(()=>{refreshCaution();if(panel.classList.contains('ps-open'))render(active)},900);
+    }).observe(document.documentElement,{subtree:true,childList:true});
+    try{
+      const caution=refreshCaution();
+      if(securityScan().score>=65||caution.block)orb.classList.add('ps-alert');
+      if(caution.block){panel.classList.add('ps-open');root.classList.remove('ps-peek');render('security')}
+    }catch{}
     if(opts.persist!==false){try{localStorage.setItem(PIN_KEY,'1')}catch{}}
     document.getElementById('mobileInstallBar')?.classList.add('ps-hidden');
     schedulePeek();

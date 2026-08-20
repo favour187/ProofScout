@@ -71,6 +71,8 @@
 #proofscout-caution strong{display:block;font-size:13px}
 #proofscout-caution span{display:block;font-size:11px;margin-top:4px;color:#f3c9ce;line-height:1.4}
 .proofscout-highlight{outline:3px solid #ff6b79!important;outline-offset:2px!important;animation:proofscoutFlash 1s ease 3}
+.proofscout-sensitive-warn{outline:2px solid #ff6b79!important;outline-offset:2px!important}
+.ps-field-caution{display:inline-block;margin:6px 0 10px;padding:4px 8px;border-radius:8px;background:#3a1014;color:#ffd6db;font:700 10px/1.3 Inter,system-ui,sans-serif}
 @keyframes proofscoutFlash{50%{outline-color:#bcff5c}}
 @media(min-width:720px){
   #proofscout-panel{left:auto;right:18px;width:min(400px,calc(100vw - 28px));bottom:92px;margin:0}

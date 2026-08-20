@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ProofScout Page Assistant",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Offline page audit for opportunity risk, XSS and SQL indicators, URL tricks, secrets, CSRF gaps and accessibility bugs.",
   "permissions": ["storage"],
   "host_permissions": ["http://*/*", "https://*/*"],
