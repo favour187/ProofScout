@@ -32,8 +32,8 @@
 #proofscout-root .ps-title strong{display:block;font-size:15px}
 #proofscout-root .ps-title span{display:block;color:var(--ps-muted);font-size:10px}
 #proofscout-root .ps-icon{all:unset;box-sizing:border-box;width:32px;height:32px;border:1px solid var(--ps-line);border-radius:10px;display:grid;place-items:center;cursor:pointer;color:var(--ps-text)}
-#proofscout-root .ps-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:10px;background:#12151b}
-#proofscout-root .ps-tab{all:unset;box-sizing:border-box;text-align:center;padding:8px 5px;border-radius:9px;color:var(--ps-muted);font:700 11px/1.2 inherit;cursor:pointer}
+#proofscout-root .ps-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:10px;background:#12151b}
+#proofscout-root .ps-tab{all:unset;box-sizing:border-box;text-align:center;padding:8px 3px;border-radius:9px;color:var(--ps-muted);font:700 10px/1.2 inherit;cursor:pointer}
 #proofscout-root .ps-tab.ps-active{background:var(--ps-panel);color:var(--ps-text)}
 #proofscout-root .ps-body{padding:16px;overflow-y:auto;overscroll-behavior:contain}
 #proofscout-root .ps-hero{padding:15px;border:1px solid rgba(110,231,255,.28);background:rgba(110,231,255,.06);border-radius:15px;margin-bottom:12px}
