@@ -219,40 +219,48 @@ $('#installBtn')?.addEventListener('click',async()=>{
 });
 window.addEventListener('appinstalled',()=>{if($('#installBtn')&&$('#installHint'))$('#installHint').textContent='Installed. Now share an opportunity page to ProofScout.';toast('ProofScout installed')});
 
-function setPinnedUI(on){
-  const main=$('#assistantInstallBtn'),mobile=$('#mobileInstallLink'),mainLabel=$('.install-label'),mobileLabel=$('.mobile-install-label'),hint=$('#installHint');
-  if(!main||!mobile)return;
-  if(on){
-    mainLabel.textContent='Scout is on the edge';
-    mobileLabel.textContent='Pinned';
-    if(hint)hint.textContent='Drag the circle to either edge. Tap it to scan this page. Hide it anytime from the panel.';
-    $('#mobileInstallBar')?.classList.add('ps-hidden');
-  }else{
-    mainLabel.textContent='Pin Scout to the edge';
-    mobileLabel.textContent='Pin';
-    if(hint)hint.textContent='A small circle appears on the edge of your screen. Tap it to inspect the page in front of you.';
-    $('#mobileInstallBar')?.classList.remove('ps-hidden');
-  }
-}
-
 function pinScout(e){
   e?.preventDefault();
   if(!window.ProofScout){toast('Scout failed to load');return}
-  window.ProofScout.onUnpin=()=>setPinnedUI(false);
   window.ProofScout.mount({persist:true,canUnpin:true});
-  setPinnedUI(true);
-  if(e) toast('Scout is on the edge — tap the circle');
+  if(e) toast('Pinned here only. Add it to Firefox to take it to other sites.');
+}
+
+function firefoxInstallUrl(){
+  const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua),isIOS=/iPhone|iPad|iPod/i.test(ua);
+  const listing=isAndroid
+    ? 'https://addons.mozilla.org/android/addon/proofscout-page-assistant/'
+    : 'https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/';
+  if(isFirefox) return listing;
+  if(isAndroid){
+    const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=org.mozilla.firefox');
+    return `intent://addons.mozilla.org/android/addon/proofscout-page-assistant/#Intent;scheme=https;package=org.mozilla.firefox;S.browser_fallback_url=${fallback};end`;
+  }
+  if(isIOS) return 'https://apps.apple.com/app/firefox-private-safe-browser/id989804926';
+  return listing;
 }
 
 function configureAssistantInstall(){
-  const AMO_ANDROID='https://addons.mozilla.org/android/addon/proofscout-page-assistant/';
-  const AMO_FIREFOX='https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/';
-  const keep=$('#keepEverywhere');
+  const listingUrl=firefoxInstallUrl();
+  const main=$('#assistantInstallBtn'),mobile=$('#mobileInstallLink'),mainLabel=$('.install-label'),mobileLabel=$('.mobile-install-label'),hint=$('#installHint');
   const ua=navigator.userAgent,isFirefox=/Firefox\//i.test(ua),isAndroid=/Android/i.test(ua);
-  if(keep) keep.href=isAndroid?AMO_ANDROID:AMO_FIREFOX;
-  $('#assistantInstallBtn')?.addEventListener('click',pinScout);
-  $('#mobileInstallLink')?.addEventListener('click',pinScout);
-  if(window.ProofScout?.isPinned()) pinScout();
+  if(main) main.href=listingUrl;
+  if(mobile) mobile.href=listingUrl;
+  if(isFirefox){
+    if(mainLabel) mainLabel.textContent='Add Scout to Firefox';
+    if(mobileLabel) mobileLabel.textContent='Add';
+    if(hint) hint.textContent='Tap Add to Firefox, allow website access, then open any other site. The P circle will sit on the edge.';
+  }else if(isAndroid){
+    if(mainLabel) mainLabel.textContent='Open Firefox to add Scout';
+    if(mobileLabel) mobileLabel.textContent='Firefox';
+    if(hint) hint.textContent='Choose Firefox if Android asks. Chrome cannot put Scout on other websites.';
+  }else{
+    if(mainLabel) mainLabel.textContent='Add Scout to Firefox';
+    if(mobileLabel) mobileLabel.textContent='Add';
+    if(hint) hint.textContent='Install the Firefox add-on, then open any website in Firefox to see the circle.';
+  }
+  $('#pinThisPage')?.addEventListener('click',pinScout);
+  if(window.ProofScout?.isPinned()) window.ProofScout.mount({persist:true,canUnpin:true});
 }
 configureAssistantInstall();
 

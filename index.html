@@ -34,10 +34,10 @@
           <h1 id="pageTitle">Trust the evidence.<br><span>Not the pressure.</span></h1>
           <p class="lede">Inspect jobs, grants, scholarships and competitions before you pay, upload documents or share personal information. Everything runs on your device.</p>
           <div class="download-row">
-            <button id="assistantInstallBtn" class="offline-download install-primary hero-install" type="button"><span class="install-label">Pin Scout to the edge</span><span aria-hidden="true">●</span></button>
+            <a id="assistantInstallBtn" class="offline-download install-primary hero-install" href="https://addons.mozilla.org/android/addon/proofscout-page-assistant/"><span class="install-label">Use Scout on every website</span><span aria-hidden="true">→</span></a>
           </div>
-          <p id="installHint" class="offline-explain">A small circle appears on the edge of your screen. Tap it to inspect the page in front of you.</p>
-          <p class="keep-everywhere"><a href="demo-target.html">Try it on a suspicious page</a> · <a id="keepEverywhere" href="https://addons.mozilla.org/android/addon/proofscout-page-assistant/">Keep Scout on every website in Firefox</a></p>
+          <p id="installHint" class="offline-explain">This must be Firefox. Tap Add to Firefox, allow website access, then open any job or grant page — the P circle will be on the edge.</p>
+          <p class="keep-everywhere"><button id="pinThisPage" type="button">Pin on this page only</button> · <a href="demo-target.html">Try a suspicious demo page</a></p>
           <div class="hero-badges" aria-label="Product assurances">
             <span>● Reads aloud</span><span>● Checks the current page</span><span>● No uploads</span>
           </div>
@@ -55,7 +55,7 @@
 
       <section class="simple-flow" aria-labelledby="simpleTitle">
         <div><p class="step">THE SIMPLE WAY</p><h2 id="simpleTitle">One install. Scout stays with you.</h2></div>
-        <ol><li><span>1</span><strong>Pin Scout</strong><small>A lime circle docks to the edge of your phone.</small></li><li><span>2</span><strong>Drag it</strong><small>Slide it left or right. It stays out of the way until you need it.</small></li><li><span>3</span><strong>Tap the circle</strong><small>Scout reads the page you are looking at — wording, URL and bugs.</small></li></ol>
+        <ol><li><span>1</span><strong>Open Firefox</strong><small>Chrome cannot put Scout on other websites.</small></li><li><span>2</span><strong>Add to Firefox</strong><small>Tap the green button, then allow access to websites.</small></li><li><span>3</span><strong>Open any site</strong><small>The P circle sits on the edge and scans that page.</small></li></ol>
       </section>
 
       <section class="scout-strip" aria-labelledby="scoutTitle">
@@ -216,13 +216,13 @@
 
   <div id="mobileInstallBar" class="mobile-install-bar" role="region" aria-label="Install ProofScout Assistant">
     <div><strong>ProofScout Assistant</strong><span>Check any page without leaving it</span></div>
-    <button id="mobileInstallLink" type="button"><span class="mobile-install-label">Pin</span></button>
+    <a id="mobileInstallLink" href="https://addons.mozilla.org/android/addon/proofscout-page-assistant/"><span class="mobile-install-label">Add</span></a>
   </div>
 
   <footer><span>ProofScout</span><span>Built for safer opportunity access · Data stays on your device</span></footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script>window.ProofScoutManual=true;</script>
-  <script src="scout.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="scout.js?v=13"></script>
+  <script type="module" src="app.js?v=13"></script>
 </body>
 </html>
