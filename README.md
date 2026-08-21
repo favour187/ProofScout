@@ -2,88 +2,57 @@
 
 **Trust before you apply.**
 
-ProofScout is a private, explainable screening tool for online jobs, grants, scholarships and competitions. It helps people identify dangerous pressure, payment demands, credential requests and missing verification evidence before they take action.
+Private, on-device screening for jobs, grants, scholarships and competitions — plus a Firefox companion that sits on the page you are already viewing.
 
-## Why it exists
+| | |
+| --- | --- |
+| Live app | https://favour187.github.io/ProofScout/ |
+| Hostile demo page | https://favour187.github.io/ProofScout/demo-target.html |
+| Firefox (desktop) | https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/ |
+| Firefox Android | https://addons.mozilla.org/android/addon/proofscout-page-assistant/ |
+| Privacy | https://favour187.github.io/ProofScout/privacy.html |
 
-Online opportunities can change lives, but fake grants, jobs and prize notices often imitate legitimate organizations. People need more than a mysterious “scam score”: they need to understand the evidence, know what remains unverified and leave with concrete next steps.
+Current companion: **ProofScout Page Assistant v3.0.0** (public on Mozilla Add-ons).
 
-ProofScout runs entirely in the browser. Pasted messages and saved cases never leave the user's device. The repository also includes `proofscout-offline.html`, a complete single-file edition with its CSS and screening engine embedded. It can be transferred by USB, Bluetooth or local sharing and opened directly in Chrome with no internet connection.
+## The problem
 
-## Features
+Fake offers ask people to pay a “processing fee”, send an OTP, or upload an ID before they can verify the organizer. A mysterious scam score is not enough. People need evidence they can read, on a phone, without creating an account.
 
-- Explainable risk score with signal-by-signal reasoning
-- Extraction of deadlines, prize claims, entry cost, mode, domain and contact
-- Independent verification checklist tailored to the result
-- Evidence-completeness meter that highlights missing proof
-- Contradiction detection for “free” offers that later request payment
-- Safe verification-message generator for contacting organizers
-- Exportable, machine-readable evidence reports
-- Local evidence locker for saved cases
-- Side-by-side opportunity comparison with risk, evidence and concern counts
-- Privacy-preserving second-opinion workflow for teachers, parents, mentors or friends
-- Automatic redaction of emails, direct links, phone/account-like numbers and identifiers
-- Offline export/import of structured review requests and human review responses
-- Credible and suspicious built-in demo scenarios
-- Print-friendly report
-- English and Hausa safety guidance
-- High-contrast mode, keyboard navigation and reduced-motion support
-- Offline installation as a Progressive Web App
-- Downloadable zero-data, single-HTML-file edition
-- Chrome page assistant that stays on the page being inspected
-- Current URL analysis for insecure, encoded, disguised or unusually structured links
-- On-page bug doctor for broken images, insecure forms/resources, duplicate IDs and accessibility defects
-- Voice commands and spoken findings through browser speech features
-- Click-to-highlight affected page elements
-- Offline XSS, SQL-error, CSRF, secret, transport and hardening audit
-- “Do not enter sensitive information” banners, field marks and form blocking
-- Live re-scan when the page DOM changes
-- Local audit export and short history
-- No account, analytics, paid API or backend
+## What you can do in two minutes
 
-## Technical approach
+1. Open the [live app](https://favour187.github.io/ProofScout/) and paste a message, or tap **Suspicious offer**.
+2. In **Firefox**, tap **Add Scout to Firefox**, allow website access, then open the [demo page](https://favour187.github.io/ProofScout/demo-target.html).
+3. Tap the lime **P** on the edge. Use **Security** first. Scout should warn you **not to type** passwords, cards or codes.
 
-The interface uses semantic HTML, responsive CSS and modular vanilla JavaScript. The screening engine combines transparent pattern rules, weighted evidence, URL checks and structured claim extraction. Positive evidence can reduce risk while danger patterns increase it. Every rule produces a human-readable explanation.
+Chrome on Android cannot put Scout on other websites. Firefox can.
 
-This is intentionally an explainable screening model rather than a black-box classifier. It does not guarantee legitimacy; it helps users decide what to verify next.
+## Product
 
-Saved cases and display preferences use browser local storage. A service worker caches the application shell for offline use.
+**Inspect (website / PWA)**  
+Explainable risk score, claim extraction, evidence completeness, verification-message generator, local case locker, side-by-side compare, redacted second-opinion files, Hausa safety guide, share-target, offline HTML edition.
 
-## Simplest user flow: install and share
+**Scout (Firefox v3)**  
+A draggable edge circle. Four tabs, all offline:
 
-On supported Android/Chrome devices, open the hosted ProofScout site and tap **Install ProofScout app**. Afterwards, while viewing an opportunity page, use the browser's normal **Share** action and choose **ProofScout**. The shared title, text and URL open in the installed app ready for inspection. This uses the standard PWA Web Share Target API and requires no browser developer settings.
+- **Security** — XSS indicators, SQL error text, CSRF gaps, leaked secrets, mixed content, copy-jack, punycode, short links, miners, hidden password fields, brand/link mismatch, card fields  
+- **URL** — encryption, open-redirect params, traversal-shaped values, `javascript:` / `data:` addresses, markup in the query  
+- **Offer** — payment pressure, OTP/seed-phrase language, fake urgency  
+- **Quality** — broken images, labels, headings, `rel=noopener`
 
-## Advanced Chrome page assistant
+If the page looks dangerous, Scout marks sensitive fields, shows **Do not enter sensitive information**, and can block a password/file submit. It never sends attack payloads and never uploads the page.
 
-The `extension` directory contains the optional ProofScout Scout extension for current-page DOM and bug diagnosis. To demo it, open `chrome://extensions`, enable Developer mode, select **Load unpacked**, and choose that directory. The assistant appears as a floating `P` on ordinary HTTP and HTTPS pages. It cannot run on protected Chrome-internal pages.
+## Stack
 
-On the hosted site, **Pin on this page only** places a small draggable circle on ProofScout itself. To take Scout onto other websites, add the public Firefox add-on:
-
-The Firefox and Firefox for Android companion is listed on Mozilla Add-ons:
-
-- Desktop: https://addons.mozilla.org/firefox/addon/proofscout-page-assistant/
-- Android: https://addons.mozilla.org/android/addon/proofscout-page-assistant/
-
-Normal users tap **Install** on the hosted site, then **Add to Firefox** on the official listing, review the page-access permission, and use the floating assistant on ordinary pages.
+HTML, CSS, vanilla JavaScript. No backend, analytics, ads, accounts or remote AI. MIT licensed.
 
 ## Run locally
-
-A local web server is recommended so the service worker can run:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080`.
-
-## Privacy and safety
-
-ProofScout does not upload pasted text. It never asks for identity documents, passwords or financial details. Users should independently confirm opportunities using an organizer's real website and contact their bank or payment provider if money or credentials may be exposed.
-
-## Limitations
-
-Text screening cannot prove that an opportunity is legitimate. Sophisticated fraud may avoid common warning language, while some legitimate announcements may contain urgency. The result is a decision-support signal, not a verdict.
+Open `http://localhost:8080`.
 
 ## Built for
 
-Build Beyond Hackathon 2026.
+[Build Beyond Hackathon 2026](https://build-beyond-hackathon.devpost.com/). Submission copy: [`SUBMISSION.md`](SUBMISSION.md).
