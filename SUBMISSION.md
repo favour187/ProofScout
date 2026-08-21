@@ -54,6 +54,28 @@ Students and first-time applicants, especially on mobile, including people who c
 | UX | One circle, spoken summary, Hausa guide, high contrast |
 | Clarity | This file, README, privacy policy, public AMO listing |
 
+## Challenges I faced
+
+Paste this into Devpost’s “What challenges did you run into?” (or similar) field.
+
+**1. A signed add-on was not enough for Firefox Android**  
+Mozilla signed the code, but one-tap install on Firefox Android only works from a **public** AMO listing (“On this site”). A self-hosted `.xpi` looks installed on desktop and still fails on the phone. I had to submit a second, listed add-on ID instead of uploading another version onto the unlisted channel.
+
+**2. A website cannot follow you to another site — or another app**  
+The first product idea was: tap a button on ProofScout, get a circle on the edge of the phone, then open WhatsApp or a job site and still see it. Android will not let a webpage float over other apps. Chrome on Android has no extensions. The working path is Firefox + a content script, and WhatsApp messages have to be **shared** or pasted into Inspect.
+
+**3. The phone kept showing “listing pending” after the site was already live**  
+A service worker (`proofscout-v11`) cache-first served the old HTML. Changing the page did nothing until the worker version was bumped and HTML went network-first.
+
+**4. Host permission is easy to skip**  
+Firefox Android can install the add-on and still hide it on other pages if “access your data for all websites” is not allowed. The install copy had to say that in one line.
+
+**5. Security checks without attacking the page**  
+I wanted XSS/SQL coverage, but sending payloads at live sites would be an attack. Scout only reads the DOM, scripts, forms, URL and storage that are already there, then **warns the person not to type**. A clean result is not a pentest.
+
+**6. Two add-on IDs**  
+The unlisted signed build and the public listing cannot share an ID. Mix them up and Android never gets a public install page.
+
 ## Limitations (say this in the video)
 
 Scout is a screening aid. A clean result is not a pentest pass and not proof an offer is real.
