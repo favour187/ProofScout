@@ -45,6 +45,16 @@ If the page looks dangerous, Scout marks sensitive fields, shows **Do not enter 
 
 HTML, CSS, vanilla JavaScript. No backend, analytics, ads, accounts or remote AI. MIT licensed.
 
+## Repo
+
+- Site: `index.html`, `app.js`, `styles.css`, `scout.js`, `scout.css`, `sw.js`
+- Offline single file: `proofscout-offline.html`
+- Firefox add-on source: `extension-firefox/` (listed as v3.0.0 on AMO)
+- Chrome unpacked demo: `extension/`
+- Hackathon write-up: `SUBMISSION.md`
+
+The signed `.xpi` lives on Mozilla Add-ons, not in this repo.
+
 ## Run locally
 
 ```bash
