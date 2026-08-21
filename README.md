@@ -51,7 +51,6 @@ HTML, CSS, vanilla JavaScript. No backend, analytics, ads, accounts or remote AI
 - Offline single file: `proofscout-offline.html`
 - Firefox add-on source: `extension-firefox/` (listed as v3.0.0 on AMO)
 - Chrome unpacked demo: `extension/`
-- Hackathon write-up: `SUBMISSION.md`
 
 The signed `.xpi` lives on Mozilla Add-ons, not in this repo.
 
@@ -65,4 +64,4 @@ Open `http://localhost:8080`.
 
 ## Built for
 
-[Build Beyond Hackathon 2026](https://build-beyond-hackathon.devpost.com/). Submission copy: [`SUBMISSION.md`](SUBMISSION.md).
+[Build Beyond Hackathon 2026](https://build-beyond-hackathon.devpost.com/).
